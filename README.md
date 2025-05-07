@@ -52,8 +52,8 @@ cd saas-dashboard
 # 2. Bağımlılıkların kurulması
 pnpm install
 
-# 3. Prisma generate yapılması
-pnpm --filter backend prisma:generate
+# 3. Prisma migrate yapılması
+pnpm --filter backend prisma:migrate
 
 # 4. Docker ayağa kaldırılması
 docker-compose up -d
