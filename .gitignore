@@ -1,0 +1,52 @@
+# Node modules
+**/node_modules/
+.pnpm/
+.pnp.*
+*.tsbuildinfo
+
+# Turbo
+.turbo/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+turbo.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env files
+.env
+.env.*.local
+
+# Build output
+dist/
+build/
+out/
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Prisma
+*.db
+prisma/migrations/*/README.md
+
+# Test coverage
+coverage/
+
+# Others
+.idea/
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# Docker
+**/docker-compose.override.yml
