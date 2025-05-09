@@ -9,9 +9,9 @@ export default function App() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/user/3");
+      const res = await fetch("/api/user?id=1");
       const data = await res.json();
-      setUser(data);
+      setUser(data[0]);
     } catch (err) {
       console.error("Validation or fetch error:", err);
     }

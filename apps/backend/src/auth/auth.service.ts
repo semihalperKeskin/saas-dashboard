@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'prisma/prisma.service';
-import { UserDto } from './dto/user.dto';
+import { UserInput } from './dto/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -24,24 +24,23 @@ export class AuthService {
     return true;
   }
 
-  async register(UserDto: UserDto) {
-    const hashedPassword = await bcrypt.hash(UserDto.password, 10);
-
+  async register(userDto: UserInput) {
     const userExists = await this.prisma.user.findUnique({
-      where: { email: UserDto.email },
+      where: { email: userDto.email },
     });
     if (userExists) {
       throw new Error('User already exists');
     }
 
+    const hashedPassword = await bcrypt.hash(userDto.password, 10);
+
     const user = await this.prisma.user.create({
       data: {
-        name: UserDto.name ?? 'VisionBoard User',
-        organization: UserDto.organization ?? '',
-        username: UserDto.username,
-        job: UserDto.job ?? '',
-        location: UserDto.location ?? '',
-        email: UserDto.email,
+        name: userDto.name,
+        organization: userDto.organization ?? '',
+        job: userDto.job ?? '',
+        location: userDto.location ?? '',
+        email: userDto.email,
         password: hashedPassword,
       },
     });

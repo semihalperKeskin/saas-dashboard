@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, UsePipes } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UserSchema } from 'src/auth/dto/user.dto';
+import { UserInput, UserSchema } from 'src/auth/dto/user.dto';
 import { ZodValidationPipe } from 'src/common/pipes/ZodValidationPipes';
 import { z } from 'zod';
 
@@ -16,7 +16,7 @@ export class AuthController {
 
   @Post('register')
   @UsePipes(new ZodValidationPipe(UserSchema))
-  async register(@Body() body: z.infer<typeof UserSchema>) {
+  async register(@Body() body: UserInput) {
     return this.authService.register(body);
   }
 }
