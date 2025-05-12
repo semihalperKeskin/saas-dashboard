@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post, UsePipes } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Req,
+  UnauthorizedException,
+  UsePipes,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserInput, UserSchema } from 'src/auth/dto/user.dto';
 import { ZodValidationPipe } from 'src/common/pipes/ZodValidationPipes';
@@ -8,7 +15,7 @@ import { z } from 'zod';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Get('login')
+  @Post('login')
   @UsePipes(new ZodValidationPipe(UserSchema))
   async login(@Body() body: z.infer<typeof UserSchema>) {
     return this.authService.login(body.email, body.password);
@@ -18,5 +25,17 @@ export class AuthController {
   @UsePipes(new ZodValidationPipe(UserSchema))
   async register(@Body() body: UserInput) {
     return this.authService.register(body);
+  }
+
+  @Post('validate-token')
+  async validateToken(@Req() req: Request) {
+    const authHeader = req.headers['authorization'] as string | undefined;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedException('Token not provided');
+    }
+
+    const token = authHeader.split(' ')[1].replace(/^"|"$/g, '');
+
+    return this.authService.validateToken(token);
   }
 }

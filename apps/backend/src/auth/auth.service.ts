@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'prisma/prisma.service';
 import { UserInput } from './dto/user.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
   async login(email: string, password: string) {
     const user = await this.prisma.user.findUnique({
@@ -21,7 +25,15 @@ export class AuthService {
       throw new Error('Invalid credentials');
     }
 
-    return true;
+    const payload = {
+      sub: user.id,
+      email: user.email,
+    };
+    const token = this.jwtService.sign(payload);
+
+    return {
+      access_token: token,
+    };
   }
 
   async register(userDto: UserInput) {
@@ -36,7 +48,7 @@ export class AuthService {
 
     const user = await this.prisma.user.create({
       data: {
-        name: userDto.name,
+        name: userDto.name ?? '',
         organization: userDto.organization ?? '',
         job: userDto.job ?? '',
         location: userDto.location ?? '',
@@ -46,5 +58,24 @@ export class AuthService {
     });
 
     return user;
+  }
+
+  async validateToken(token: string) {
+    const decoded: { sub: string; email: string } =
+      await this.jwtService.verify(token);
+
+    if (!decoded) {
+      throw new Error('Invalid token');
+      return null;
+    }
+    const user = await this.prisma.user.findUnique({
+      where: { email: decoded.email },
+    });
+    if (!user) {
+      throw new Error('User not found');
+      return null;
+    }
+
+    return true;
   }
 }

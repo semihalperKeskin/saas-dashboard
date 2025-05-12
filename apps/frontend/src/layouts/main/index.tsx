@@ -1,18 +1,7 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { Sidebar } from "./sidebar";
-import { useEffect } from "react";
 
 function MainLayout() {
-    const user = localStorage.getItem("user");
-    const navigate = useNavigate();
-
-    useEffect(() => {
-      if (!user) {
-        navigate("/auth/login");
-      }
-    }, [user, navigate]);
-
-
   return (
     <div className="grid grid-cols-6">
       <aside className="col-span-1 min-h-screen bg-gray-800 text-white p-4">

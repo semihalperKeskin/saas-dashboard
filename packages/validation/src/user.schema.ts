@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const UserSchema = z.object({
-  name: z.string().min(1),
+  name: z.string().optional().nullable().default(""),
   organization: z.string().optional().nullable().default(""),
   job: z.string().optional().nullable().default(""),
   location: z.string().optional().nullable().default(""),
