@@ -2,18 +2,17 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bounce, toast, ToastContainer } from "react-toastify";
+import { AuthFormData, AuthTokenData } from "~/types";
 
 function Login() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<AuthFormData>({
     email: "",
     password: "",
   });
   const navigate = useNavigate();
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -27,18 +26,18 @@ function Login() {
       },
       body: JSON.stringify(formData),
     })
-      .then((response) => {
-        if (!response.ok) {
+      .then((res: Response) => {
+        if (!res.ok) {
           throw new Error("Network response was not ok");
         }
-        return response.json();
+        return res.json();
       })
-      .then((data) => {
+      .then((data: AuthTokenData) => {
         localStorage.setItem("access_token", data.access_token);
         navigate("/");
       })
-      .catch(() => {
-        const message = "Invalid email or password. Please try again.";
+      .catch(async () => {
+        const message: string = "Invalid email or password. Please try again.";
         toast.error(message, {
           position: "bottom-left",
           autoClose: 5000,

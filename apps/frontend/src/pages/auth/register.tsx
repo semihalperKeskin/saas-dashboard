@@ -4,23 +4,24 @@ import { useNavigate } from "react-router-dom";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import { UserSchema } from "@vizionboard/validation";
 import { z } from "zod";
+import { AuthFormData } from "~/types";
 
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState<AuthFormData>(
+    {
+      email: "",
+      password: "",
+    }
+  );
   const navigate = useNavigate();
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   function showZodErrors(error: z.ZodError) {
-    const messages = error.issues.map((issue) => issue.message).join(", ");
+    const messages: string = error.issues.map((issue) => issue.message).join(", ");
     toast.error(messages, {
       position: "bottom-left",
       autoClose: 5000,
@@ -56,11 +57,12 @@ function Register() {
         }
         return response.json();
       })
-      .then(() => {
+      .then((data: { message: string }) => {
+        toast.success(data.message);
         navigate("/auth/login");
       })
-      .catch(async (error) => {
-        const message = error.message || "Unexpected error";
+      .catch(async (error: unknown) => {
+        const message = error instanceof Error ? error.message : "Unexpected error";
         toast.error(message || "Unexpected error", {
           position: "bottom-left",
           autoClose: 5000,
