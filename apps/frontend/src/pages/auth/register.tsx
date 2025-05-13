@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import { useNavigate } from "react-router-dom";
+import { Bounce, toast, ToastContainer } from "react-toastify";
+import { UserSchema } from "@vizionboard/validation";
+import { z } from "zod";
 
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
   });
@@ -17,8 +19,29 @@ function Register() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  function showZodErrors(error: z.ZodError) {
+    const messages = error.issues.map((issue) => issue.message).join(", ");
+    toast.error(messages, {
+      position: "bottom-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "colored",
+      transition: Bounce,
+    });
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const result = UserSchema.safeParse(formData);
+
+    if (!result.success) {
+      showZodErrors(result.error);
+      return;
+    }
 
     fetch("/api/auth/register", {
       method: "POST",
@@ -36,8 +59,19 @@ function Register() {
       .then(() => {
         navigate("/auth/login");
       })
-      .catch((error) => {
-        console.error("Error:", error);
+      .catch(async (error) => {
+        const message = error.message || "Unexpected error";
+        toast.error(message || "Unexpected error", {
+          position: "bottom-left",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
       });
   };
 
@@ -47,36 +81,27 @@ function Register() {
         <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="name" className="block text-gray-700 mb-2">
-              name
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              placeholder="enter name"
-              onChange={handleChange}
-              className="border border-gray-300 p-2 w-full rounded"
-              required
-            />
-          </div>
-          <div className="mb-4">
             <label htmlFor="email" className="block text-gray-700 mb-2">
-              Email
+              Email <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
               id="email"
               name="email"
-              placeholder="enter email"
+              placeholder="Enter email"
+              value={formData.email}
               onChange={handleChange}
-              className="border border-gray-300 p-2 w-full rounded"
+              className="border border-gray-300 p-2 w-full rounded invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-500"
               required
             />
           </div>
           <div className="mb-4">
             <label htmlFor="password" className="block text-gray-700 mb-2">
-              Password
+              Password <span className="text-red-500">*</span>
+              <span className="text-gray-500 text-sm">
+                {" "}
+                (at least 6 characters)
+              </span>
             </label>
             <div className="relative">
               <input
@@ -84,8 +109,10 @@ function Register() {
                 id="password"
                 name="password"
                 placeholder="Enter password"
+                value={formData.password}
                 onChange={handleChange}
-                className="border border-gray-300 p-2 w-full pr-10 rounded"
+                className="border border-gray-300 p-2 w-full pr-10 rounded invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-500"
+                minLength={6}
                 required
               />
 
@@ -103,7 +130,7 @@ function Register() {
           </div>
           <button
             type="submit"
-            className="bg-blue-500 text-white p-2 rounded w-full cursor-pointer"
+            className="bg-blue-500 hover:bg-blue-400 text-white p-2 rounded w-full cursor-pointer"
           >
             Register
           </button>
@@ -118,6 +145,7 @@ function Register() {
           Login
         </button>
       </div>
+      <ToastContainer />
     </div>
   );
 }
