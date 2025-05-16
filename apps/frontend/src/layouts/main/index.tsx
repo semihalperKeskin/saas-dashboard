@@ -3,18 +3,20 @@ import { Sidebar } from "./sidebar";
 
 function MainLayout() {
   return (
-    <div className="grid grid-cols-6">
-      <aside className="col-span-1 min-h-screen bg-gray-800 text-white p-4">
+    <div className="flex min-h-screen">
+      <aside className="w-72 bg-gray-800 text-white p-4 flex-shrink-0">
         <Sidebar />
       </aside>
-      <main className="col-span-5 grid grid-rows-12 gap-4 bg-[#EFEEEA] flex-grow">
-        <div className="row-span-1 bg-white h-full border-b-2 border-gray-100 flex items-center px-4">
-          Page Name
-        </div>
-        <div className="row-span-4 px-4">
+
+      <div className="flex flex-col flex-grow bg-[#EFEEEA]">
+        <header className="h-16 bg-white border-b border-gray-200 flex items-center px-6 shadow-sm">
+          <h1 className="text-lg font-semibold">Page Name</h1>
+        </header>
+
+        <main className="flex-grow overflow-y-auto px-6 py-4">
           <Outlet />
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
