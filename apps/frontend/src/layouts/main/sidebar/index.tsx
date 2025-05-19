@@ -1,51 +1,53 @@
-import { ArrowLeftStartOnRectangleIcon } from "@heroicons/react/16/solid";
-import { useEffect } from "react";
+import {
+  ArrowLeftStartOnRectangleIcon,
+  ChartBarSquareIcon,
+  HomeIcon,
+  UserIcon,
+} from "@heroicons/react/16/solid";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "~/contexts/UserContext";
+
 
 export function Sidebar() {
-  const user = useUser();
-  const navigate = useNavigate();
-
-  useEffect(() => {}, []);
+  const navigate = useNavigate()
 
   const logout = () => {
     localStorage.removeItem("access_token");
-    navigate("auth/login")
-  }
+    navigate("auth/login");
+  };
+
+  const baseButtonClass =
+    "flex items-center gap-2 text-left px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer";
 
   return (
-    <aside className="w-64 h-full flex flex-col p-4">
-      <div className="pb-4 border-b border-gray-300 mb-4">
-        <p className="font-semibold">{user?.name || "Loading..."}</p>
+    <div className="w-64 h-full flex flex-col justify-between p-4 bg-white border-r border-gray-200">
+      <div>
+        <div className="mb-4">
+          <img src="assets/logo.png" alt="Logo" className="w-12 h-12" />
+        </div>
+
+        <nav className="flex flex-col gap-1">
+          <button className={baseButtonClass}>
+            <UserIcon className="w-5 h-5" />
+            <span>Profil</span>
+          </button>
+          <button className={baseButtonClass}>
+            <HomeIcon className="w-5 h-5" />
+            <span>Home</span>
+          </button>
+          <button className={baseButtonClass}>
+            <ChartBarSquareIcon className="w-5 h-5" />
+            <span>İstatistik</span>
+          </button>
+        </nav>
       </div>
 
-      <nav className="flex flex-col gap-3 text-gray-300">
-        <button className="text-left p-2 hover:text-gray-200 hover:bg-gray-600 hover:rounded-xl transition cursor-pointer">
-          Profil
-        </button>
-        <button className="text-left p-2 hover:text-gray-200 hover:bg-gray-600 hover:rounded-xl transition cursor-pointer">
-          Dashboard
-        </button>
-        <button className="text-left p-2 hover:text-gray-200 hover:bg-gray-600 hover:rounded-xl transition cursor-pointer">
-          To-Do List
-        </button>
-        <button className="text-left p-2 hover:text-gray-200 hover:bg-gray-600 hover:rounded-xl transition cursor-pointer">
-          İstatistik
-        </button>
-      </nav>
-
-      <div className="flex-grow" />
-
-      <div className="mt-6">
-        <button
-          className="flex items-center gap-2 text-red-500 hover:text-red-600 transition-colors mt-4 cursor-pointer"
-          onClick={() => logout()}
-        >
-          <ArrowLeftStartOnRectangleIcon className="w-5 h-5" />
-          <span>Logout</span>
-        </button>
-      </div>
-    </aside>
+      <button
+        onClick={logout}
+        className="flex items-center gap-2 px-3 py-2 text-red-400 hover:bg-red-200 hover:text-red-600 cursor-pointer"
+      >
+        <ArrowLeftStartOnRectangleIcon className="w-5 h-5" />
+        Logout
+      </button>
+    </div>
   );
 }
