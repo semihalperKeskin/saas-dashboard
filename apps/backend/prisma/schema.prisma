@@ -9,12 +9,20 @@ datasource db {
 
 model User {
   id            Int      @id @default(autoincrement())
-  name          String 
+  name          String?
   username String? @unique
-  organization  String
-  job           String
-  location      String
+  organization  String?
+  job           String?
+  location      String?
   email         String   @unique
   password      String
   createdAt     DateTime @default(now())
+  tokens        UserToken[]
+}
+
+model UserToken {
+  id      Int     @id @default(autoincrement())
+  token   String
+  userId  Int
+  user    User   @relation(fields: [userId], references: [id])
 }

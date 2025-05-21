@@ -1,8 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'prisma/prisma.service';
 import { UserInput } from './dto/user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { AuthInput } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -11,18 +16,18 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(email: string, password: string) {
+  async login(data: AuthInput) {
     const user = await this.prisma.user.findUnique({
-      where: { email },
+      where: { email: data.email },
     });
 
     if (!user) {
-      throw new Error('Invalid credentials');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(data.password, user.password);
     if (!isPasswordValid) {
-      throw new Error('Invalid credentials');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const payload = {
@@ -30,6 +35,16 @@ export class AuthService {
       email: user.email,
     };
     const token = this.jwtService.sign(payload);
+
+    const tokenData = await this.prisma.userToken.create({
+      data: {
+        userId: user.id,
+        token,
+      },
+    });
+    if (!tokenData) {
+      throw new UnauthorizedException('Failed to create token');
+    }
 
     return {
       access_token: token,
@@ -48,6 +63,7 @@ export class AuthService {
 
     const user = await this.prisma.user.create({
       data: {
+        username: userDto.username,
         name: userDto.name ?? '',
         organization: userDto.organization ?? '',
         job: userDto.job ?? '',
@@ -61,19 +77,29 @@ export class AuthService {
   }
 
   async validateToken(token: string) {
-    const decoded: { sub: string; email: string } =
-      await this.jwtService.verify(token);
+    let decoded: { sub: string; email: string };
 
-    if (!decoded) {
-      throw new Error('Invalid token');
-      return null;
+    try {
+      decoded = await this.jwtService.verify(token);
+    } catch (err) {
+      console.error('JWT verify error:', err);
+      throw new UnauthorizedException('Invalid token');
     }
+
     const user = await this.prisma.user.findUnique({
       where: { email: decoded.email },
     });
+
     if (!user) {
-      throw new Error('User not found');
-      return null;
+      throw new NotFoundException('User not found');
+    }
+
+    const tokenData = await this.prisma.userToken.findFirst({
+      where: { userId: user.id },
+    });
+
+    if (!tokenData) {
+      throw new UnauthorizedException('Token not found');
     }
 
     return true;
