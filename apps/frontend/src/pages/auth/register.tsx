@@ -2,13 +2,12 @@ import { useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import { useNavigate } from "react-router-dom";
 import { Bounce, toast, ToastContainer } from "react-toastify";
-import { UserSchema } from "@vizionboard/validation";
+import { AuthInput, UserSchema } from "@vizionboard/validation";
 import { z } from "zod";
-import { AuthFormData } from "~/types";
 
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState<AuthFormData>(
+  const [formData, setFormData] = useState<AuthInput>(
     {
       email: "",
       password: "",

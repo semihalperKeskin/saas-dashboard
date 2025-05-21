@@ -1,12 +1,12 @@
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
+import { AuthInput } from "@vizionboard/validation";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bounce, toast, ToastContainer } from "react-toastify";
-import { AuthFormData, AuthTokenData } from "~/types";
 
 function Login() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [formData, setFormData] = useState<AuthFormData>({
+  const [formData, setFormData] = useState<AuthInput>({
     email: "",
     password: "",
   });
@@ -32,7 +32,7 @@ function Login() {
         }
         return res.json();
       })
-      .then((data: AuthTokenData) => {
+      .then((data) => {
         localStorage.setItem("access_token", data.access_token);
         navigate("/");
       })
