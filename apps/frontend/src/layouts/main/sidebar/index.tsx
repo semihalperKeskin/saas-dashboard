@@ -8,11 +8,32 @@ import { useNavigate } from "react-router-dom";
 
 
 export function Sidebar() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
+  
   const logout = () => {
-    localStorage.removeItem("access_token");
-    navigate("auth/login");
+    const token = localStorage.getItem("access_token");
+
+    if (!token) {
+      console.warn("Token bulunamadı.");
+      return;
+    }
+    fetch("/api/auth/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Logout başarılı:", data);
+        localStorage.removeItem("access_token");
+        navigate("auth/login");
+      })
+      .catch((err) => {
+        console.error("Hata:", err);
+      });
   };
 
   const baseButtonClass =
@@ -42,7 +63,7 @@ export function Sidebar() {
       </div>
 
       <button
-        onClick={logout}
+        onClick={() => logout()}
         className="flex items-center gap-2 px-3 py-2 text-red-400 hover:bg-red-200 hover:text-red-600 cursor-pointer"
       >
         <ArrowLeftStartOnRectangleIcon className="w-5 h-5" />

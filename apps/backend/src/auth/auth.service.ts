@@ -16,6 +16,39 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  private async decodeAndFindUser(token: string) {
+    let decoded: { sub: string; email: string };
+
+    try {
+      decoded = await this.jwtService.verify(token);
+    } catch (err) {
+      console.error('JWT verify error:', err);
+      throw new UnauthorizedException('Invalid token');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { email: decoded.email },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return { user, decoded };
+  }
+
+  private async findUserToken(userId: number) {
+    const tokenData = await this.prisma.userToken.findFirst({
+      where: { userId: userId },
+    });
+
+    if (!tokenData) {
+      throw new UnauthorizedException('Token not found');
+    }
+
+    return tokenData;
+  }
+
   async login(data: AuthInput) {
     const user = await this.prisma.user.findUnique({
       where: { email: data.email },
@@ -76,32 +109,21 @@ export class AuthService {
     return user;
   }
 
-  async validateToken(token: string) {
-    let decoded: { sub: string; email: string };
+  async logout(token: string) {
+    const { user } = await this.decodeAndFindUser(token);
+    const tokenData = await this.findUserToken(user.id);
 
-    try {
-      decoded = await this.jwtService.verify(token);
-    } catch (err) {
-      console.error('JWT verify error:', err);
-      throw new UnauthorizedException('Invalid token');
-    }
-
-    const user = await this.prisma.user.findUnique({
-      where: { email: decoded.email },
+    await this.prisma.userToken.delete({
+      where: { id: tokenData.id },
     });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    const tokenData = await this.prisma.userToken.findFirst({
-      where: { userId: user.id },
-    });
-
-    if (!tokenData) {
-      throw new UnauthorizedException('Token not found');
-    }
 
     return true;
+  }
+
+  async validation(token: string) {
+    const { user } = await this.decodeAndFindUser(token);
+    await this.findUserToken(user.id);
+
+    return user;
   }
 }
