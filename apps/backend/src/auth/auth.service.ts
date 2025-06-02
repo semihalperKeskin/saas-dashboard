@@ -5,9 +5,9 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'prisma/prisma.service';
-import { UserInput } from './dto/user.dto';
-import { JwtService } from '@nestjs/jwt';
 import { AuthInput } from './dto/auth.dto';
+import { RegisterInput } from './dto/register.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -58,6 +58,14 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    if (!user.password) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (!data.password) {
+      throw new UnauthorizedException('Password is required');
+    }
+
     const isPasswordValid = await bcrypt.compare(data.password, user.password);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
@@ -84,24 +92,24 @@ export class AuthService {
     };
   }
 
-  async register(userDto: UserInput) {
+  async register(data: RegisterInput) {
     const userExists = await this.prisma.user.findUnique({
-      where: { email: userDto.email },
+      where: { email: data.email },
     });
     if (userExists) {
       throw new Error('User already exists');
     }
 
-    const hashedPassword = await bcrypt.hash(userDto.password, 10);
+    const hashedPassword = await bcrypt.hash(data.password, 10);
 
     const user = await this.prisma.user.create({
       data: {
-        username: userDto.username,
-        name: userDto.name ?? '',
-        organization: userDto.organization ?? '',
-        job: userDto.job ?? '',
-        location: userDto.location ?? '',
-        email: userDto.email,
+        username: data.username ?? '',
+        name: data.name ?? '',
+        organization: data.organization ?? '',
+        job: data.job ?? '',
+        location: data.location ?? '',
+        email: data.email,
         password: hashedPassword,
       },
     });

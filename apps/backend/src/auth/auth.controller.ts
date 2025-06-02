@@ -7,9 +7,9 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UserInput } from 'src/auth/dto/user.dto';
 import { ZodValidationPipe } from 'src/common/pipes/ZodValidationPipes';
-import { AuthInput, AuthSchema } from '@vizionboard/validation';
+import { AuthSchema, AuthInput } from './dto/auth.dto';
+import { RegisterInput, RegisterSchema } from './dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -22,9 +22,9 @@ export class AuthController {
   }
 
   @Post('register')
-  @UsePipes(new ZodValidationPipe(AuthSchema))
-  async register(@Body() body: UserInput) {
-    return this.authService.register(body);
+  @UsePipes(new ZodValidationPipe(RegisterSchema))
+  async register(@Body() data: RegisterInput) {
+    return this.authService.register(data);
   }
 
   @Post('validation')
