@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const UserSchema = z.object({
+export const RegisterSchema = z.object({
   username: z.string().optional().nullable().default(""),
   name: z.string().optional().nullable().default(""),
   organization: z.string().optional().nullable().default(""),
@@ -15,4 +15,4 @@ export const UserSchema = z.object({
     }),
 });
 
-export type UserInput = z.infer<typeof UserSchema>;
+export type RegisterInput = z.infer<typeof RegisterSchema>;
