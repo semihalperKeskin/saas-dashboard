@@ -46,8 +46,8 @@ function Profil() {
   return (
     <div>
       <h1 className="text-2xl font-thin">Account Settings</h1>
-      <div className="flex justify-center mt-3 bg-white rounded-2xl p-10">
-        <form onSubmit={handleSubmit(onSubmit)} className="w-1/2">
+      <div className="flex justify-center mt-3 bg-white rounded-2xl p-5 md:p-10">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full lg:w-1/2">
           <label className={style.label}>
             <span className={style.span}>Username</span>
             <input

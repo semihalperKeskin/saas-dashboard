@@ -3,14 +3,13 @@ import {
   ChartBarSquareIcon,
   HomeIcon,
   UserIcon,
+  XMarkIcon,
 } from "@heroicons/react/16/solid";
-import { useNavigate } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 
 export function Sidebar() {
   const navigate = useNavigate();
 
-  
   const logout = () => {
     const token = localStorage.getItem("access_token");
 
@@ -29,7 +28,7 @@ export function Sidebar() {
       .then((data) => {
         console.log("Logout başarılı:", data);
         localStorage.removeItem("access_token");
-        navigate("auth/login");
+        navigate("/auth/login", { replace: true });
       })
       .catch((err) => {
         console.error("Hata:", err);
@@ -40,25 +39,31 @@ export function Sidebar() {
     "flex items-center gap-2 text-left px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer";
 
   return (
-    <div className="w-64 h-full flex flex-col justify-between p-4 bg-white border-r border-gray-200">
+    <div className="w-screen h-screen md:w-52 lg:w-64 md:h-full flex flex-col justify-between p-4 bg-white border-r border-gray-200">
       <div>
-        <div className="mb-4">
+        <div className="mb-4 grid grid-cols-[1fr_auto] items-center justify-between">
           <img src="assets/logo.png" alt="Logo" className="w-12 h-12" />
+          <XMarkIcon
+            className="w-6 h-6 md:hidden cursor-pointer"
+            onClick={() =>
+              document.querySelector("aside")?.classList.add("hidden")
+            }
+          />
         </div>
 
         <nav className="flex flex-col gap-1">
-          <button className={baseButtonClass}>
+          <Link to="/profile" className={baseButtonClass}>
             <UserIcon className="w-5 h-5" />
             <span>Profil</span>
-          </button>
-          <button className={baseButtonClass}>
+          </Link>
+          <Link to="/profile" className={baseButtonClass}>
             <HomeIcon className="w-5 h-5" />
             <span>Home</span>
-          </button>
-          <button className={baseButtonClass}>
+          </Link>
+          <Link to="/profile" className={baseButtonClass}>
             <ChartBarSquareIcon className="w-5 h-5" />
             <span>İstatistik</span>
-          </button>
+          </Link>
         </nav>
       </div>
 
