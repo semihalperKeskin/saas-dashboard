@@ -1,9 +1,7 @@
-import Profil from "~/components/profil";
-
 function Home() {
   return (
     <div>
-        <Profil />
+        This is the home page.
     </div>
   );
 }

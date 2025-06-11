@@ -52,17 +52,17 @@ export function Sidebar() {
         </div>
 
         <nav className="flex flex-col gap-1">
-          <Link to="/profile" className={baseButtonClass}>
-            <UserIcon className="w-5 h-5" />
-            <span>Profil</span>
-          </Link>
-          <Link to="/profile" className={baseButtonClass}>
+          <Link to="/" className={baseButtonClass}>
             <HomeIcon className="w-5 h-5" />
             <span>Home</span>
           </Link>
           <Link to="/profile" className={baseButtonClass}>
+            <UserIcon className="w-5 h-5" />
+            <span>Profile</span>
+          </Link>
+          <Link to="/statistics" className={baseButtonClass}>
             <ChartBarSquareIcon className="w-5 h-5" />
-            <span>İstatistik</span>
+            <span>Statistics</span>
           </Link>
         </nav>
       </div>

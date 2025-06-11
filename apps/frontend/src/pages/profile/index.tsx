@@ -2,7 +2,7 @@ import { UpdateUserInput } from "@vizionboard/validation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useUser } from "~/contexts/UserContext";
 
-function Profil() {
+function Profile() {
   const { register, handleSubmit } = useForm<UpdateUserInput>();
 
   const onSubmit: SubmitHandler<UpdateUserInput> = (data) => {
@@ -118,4 +118,4 @@ function Profil() {
     </div>
   );
 }
-export default Profil;
+export default Profile;

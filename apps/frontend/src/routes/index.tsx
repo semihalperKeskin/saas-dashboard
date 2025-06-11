@@ -5,6 +5,8 @@ import Home from "~/pages/home";
 import Login from "~/pages/auth/login";
 import Register from "~/pages/auth/register";
 import PrivateRoute from "~/components/privateRoute";
+import Profile from "~/pages/profile";
+import Statistics from "~/pages/statistics";
 
 export const routes = createBrowserRouter([
   {
@@ -18,6 +20,14 @@ export const routes = createBrowserRouter([
       {
         index: true,
         element: <Home />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
+      },
+      {
+        path: "statistics",
+        element: <Statistics />,
       },
     ],
   },
