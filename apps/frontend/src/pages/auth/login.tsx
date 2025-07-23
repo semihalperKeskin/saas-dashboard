@@ -2,7 +2,7 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import { AuthInput } from "@vizionboard/validation";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bounce, toast, ToastContainer } from "react-toastify";
+import { Bounce, toast } from "react-toastify";
 
 function Login() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -117,7 +117,6 @@ function Login() {
           Register
         </button>
       </div>
-      <ToastContainer />
     </div>
   );
 }

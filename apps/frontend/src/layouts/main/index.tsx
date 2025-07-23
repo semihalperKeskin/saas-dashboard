@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import { Sidebar } from "./sidebar";
 import { Bars2Icon } from "@heroicons/react/16/solid";
 import { useRef } from "react";
+import { ToastContainer } from "react-toastify";
 
 function MainLayout() {
   const asideRef = useRef<HTMLElement | null>(null);
@@ -28,6 +29,9 @@ function MainLayout() {
           <Outlet />
         </main>
       </div>
+      <span className="absolute">
+        <ToastContainer />
+      </span>
     </div>
   );
 }

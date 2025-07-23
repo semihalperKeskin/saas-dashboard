@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import { useNavigate } from "react-router-dom";
-import { Bounce, toast, ToastContainer } from "react-toastify";
+import { Bounce, toast } from "react-toastify";
 import { AuthInput, UserSchema } from "@vizionboard/validation";
 import { z } from "zod";
 
@@ -146,7 +146,6 @@ function Register() {
           Login
         </button>
       </div>
-      <ToastContainer />
     </div>
   );
 }

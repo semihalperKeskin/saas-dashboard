@@ -1,6 +1,7 @@
 import { UpdateUserInput } from "@vizionboard/validation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useUser } from "~/contexts/UserContext";
+import { Bounce, toast } from "react-toastify";
 
 function Profile() {
   const { register, handleSubmit } = useForm<UpdateUserInput>();
@@ -30,6 +31,17 @@ function Profile() {
       })
       .then((result) => {
         console.log("Kullanıcı başarıyla güncellendi:", result);
+        const message: string = "Successfully updated your profile.";
+        toast.success(message, {
+          position: "bottom-left",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+          transition: Bounce,
+        });
       })
       .catch((error) => {
         console.error("Güncelleme hatası:", error);
@@ -110,7 +122,7 @@ function Profile() {
 
           <input
             type="submit"
-            className="btnbg-transparent hover:bg-blue-500 text-blue-600 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+            className="btnbg-transparent hover:bg-blue-500 text-blue-600 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded cursor-pointer mt-4"
             value="Update"
           />
         </form>
