@@ -2,7 +2,7 @@ import { useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import { useNavigate } from "react-router-dom";
 import { Bounce, toast } from "react-toastify";
-import { AuthInput, UserSchema } from "@vizionboard/validation";
+import { AuthInput, RegisterSchema } from "@vizionboard/validation";
 import { z } from "zod";
 
 function Register() {
@@ -36,7 +36,7 @@ function Register() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const result = UserSchema.safeParse(formData);
+    const result = RegisterSchema.safeParse(formData);
 
     if (!result.success) {
       showZodErrors(result.error);
