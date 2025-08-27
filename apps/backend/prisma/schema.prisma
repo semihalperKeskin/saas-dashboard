@@ -8,21 +8,43 @@ datasource db {
 }
 
 model User {
-  id            Int      @id @default(autoincrement())
-  name          String?
-  username      String?
-  organization  String?
-  job           String?
-  location      String?
-  email         String   @unique
-  password      String
-  createdAt     DateTime @default(now())
-  tokens        UserToken[]
+  id           Int         @id @default(autoincrement())
+  name         String?
+  username     String?
+  organization String?
+  job          String?
+  location     String?
+  email        String      @unique
+  password     String
+  createdAt    DateTime    @default(now())
+  tokens       UserToken[]
 }
 
 model UserToken {
-  id      Int     @id @default(autoincrement())
-  token   String
-  userId  Int
-  user    User   @relation(fields: [userId], references: [id])
+  id     Int    @id @default(autoincrement())
+  token  String
+  userId Int
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Column {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(uuid())
+  title     String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tasks     Task[]
+}
+
+model Task {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(uuid())
+  content   String
+  columnId  String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  column Column @relation(fields: [columnId], references: [uuid], onDelete: Cascade)
 }
