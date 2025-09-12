@@ -1,7 +1,7 @@
 import {
   ArrowLeftStartOnRectangleIcon,
   ChartBarSquareIcon,
-  HomeIcon,
+  RectangleStackIcon,
   UserIcon,
   XMarkIcon,
 } from "@heroicons/react/16/solid";
@@ -53,8 +53,8 @@ export function Sidebar() {
 
         <nav className="flex flex-col gap-1">
           <Link to="/" className={baseButtonClass}>
-            <HomeIcon className="w-5 h-5" />
-            <span>Home</span>
+            <RectangleStackIcon className="w-5 h-5" />
+            <span>Board</span>
           </Link>
           <Link to="/profile" className={baseButtonClass}>
             <UserIcon className="w-5 h-5" />
