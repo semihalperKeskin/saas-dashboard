@@ -11,7 +11,7 @@ export class ColumnService {
     return this.prisma.column.create({
       data: {
         title: column.title,
-        order: column.order,
+        order: column.order || 0,
       },
     });
   }
