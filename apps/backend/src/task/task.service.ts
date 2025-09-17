@@ -11,7 +11,7 @@ export class TaskService {
     return this.prisma.task.create({
       data: {
         content: task.content,
-        order: task.order,
+        order: task.order || 0,
         column: {
           connect: { uuid: task.column },
         },
