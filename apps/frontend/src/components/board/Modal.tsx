@@ -1,0 +1,69 @@
+type ModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit?: () => void;
+  inputState?: string;
+  setInputState?: (value: string) => void;
+  actionButonLabel: string;
+};
+
+export default function Modal({
+  isOpen,
+  onClose,
+  onSubmit,
+  inputState,
+  setInputState,
+  actionButonLabel,
+}: ModalProps) {
+  const handleSubmit = () => {
+    if (setInputState) {
+      setInputState("");
+    }
+    
+    if (onSubmit) {
+      onSubmit();
+    }
+    onClose();
+  };
+
+  return (
+    <div>
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={onClose}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-xl p-6 max-w-lg w-full relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative mb-4">
+              <button
+                onClick={onClose}
+                className="absolute right-2 text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+            <div>Enter New Item Name</div>
+            <input
+              type="text"
+              value={inputState}
+              name="name"
+              onChange={(e) => setInputState && setInputState(e.target.value)}
+              placeholder="Enter new item name..."
+              className="w-full border border-gray-300 rounded-md p-2 mt-4"
+            />
+
+            <button
+              onClick={handleSubmit}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+            >
+              Add {actionButonLabel}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
