@@ -5,3 +5,4 @@ export * from "./schemas/auth/register.schema";
 export * from "./schemas/column/create.schema";
 export * from "./schemas/task/task.schema";
 export * from "./schemas/board/index";
+export * from "./schemas/task/create.schema";

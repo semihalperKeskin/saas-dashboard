@@ -20,7 +20,9 @@ export class ColumnService {
     return this.prisma.column.findMany({
       where: {},
       include: {
-        tasks: true,
+        tasks: {
+          orderBy: { order: 'asc' },
+        },
       },
     });
   }

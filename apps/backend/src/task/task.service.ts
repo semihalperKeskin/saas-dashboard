@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TaskInput } from './dto/task.dto';
+import { CreateTaskInput } from './dto/task.dto';
 import { UUID } from 'crypto';
 import { PrismaService } from 'prisma/prisma.service';
 
@@ -7,13 +7,13 @@ import { PrismaService } from 'prisma/prisma.service';
 export class TaskService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(task: TaskInput) {
+  async create(task: CreateTaskInput) {
     return this.prisma.task.create({
       data: {
         content: task.content,
-        order: task.order || 0,
+        order: task.order,
         column: {
-          connect: { uuid: task.column },
+          connect: { uuid: task.columnUUID },
         },
       },
     });
@@ -22,6 +22,7 @@ export class TaskService {
   async findAll() {
     return this.prisma.task.findMany({
       where: {},
+      orderBy: { order: 'asc' },
     });
   }
 
@@ -37,10 +38,10 @@ export class TaskService {
     });
   }
 
-  async reorder(taskUUID: UUID, index: number) {
+  async reorder(taskUUID: UUID, order: number) {
     return this.prisma.task.update({
       where: { uuid: taskUUID },
-      data: { order: index },
+      data: { order: order },
     });
   }
 

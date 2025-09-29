@@ -8,8 +8,8 @@ import {
   Put,
 } from '@nestjs/common';
 import { TaskService } from './task.service';
-import { TaskInput } from './dto/task.dto';
 import { UUID } from 'crypto';
+import { CreateTaskInput } from '@vizionboard/validation';
 
 @Controller('task')
 export class TaskController {
@@ -21,7 +21,7 @@ export class TaskController {
   }
 
   @Post()
-  async create(@Body() task: TaskInput) {
+  async create(@Body() task: CreateTaskInput) {
     return this.task.create(task);
   }
 
@@ -37,9 +37,9 @@ export class TaskController {
   @Put('reorder')
   async reorder(
     @Body('taskUUID') taskUUID: UUID,
-    @Body('index') index: number,
+    @Body('order') order: number,
   ) {
-    return this.task.reorder(taskUUID, index);
+    return this.task.reorder(taskUUID, order);
   }
 
   @Delete(':uuid')
