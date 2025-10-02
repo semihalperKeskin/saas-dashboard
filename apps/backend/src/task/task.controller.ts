@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { UUID } from 'crypto';
-import { CreateTaskInput } from '@vizionboard/validation';
+import { CreateTaskInput, MoveTaskInput } from '@vizionboard/validation';
 
 @Controller('task')
 export class TaskController {
@@ -26,20 +26,8 @@ export class TaskController {
   }
 
   @Put('move')
-  async move(
-    @Body('columnUUID') columnUUID: UUID,
-    @Body('taskUUID') taskUUID: UUID,
-    @Body('index') index: number,
-  ) {
-    return this.task.move(columnUUID, taskUUID, index);
-  }
-
-  @Put('reorder')
-  async reorder(
-    @Body('taskUUID') taskUUID: UUID,
-    @Body('order') order: number,
-  ) {
-    return this.task.reorder(taskUUID, order);
+  async move(@Body() moveTask: MoveTaskInput) {
+    return this.task.move(moveTask);
   }
 
   @Delete(':uuid')

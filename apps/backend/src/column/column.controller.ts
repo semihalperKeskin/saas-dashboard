@@ -19,7 +19,6 @@ export class ColumnController {
 
   @Delete(':uuid')
   async remove(@Param('uuid') uuid: UUID) {
-    console.log('Deleting task with UUID:', uuid);
     return this.column.remove(uuid);
   }
 }

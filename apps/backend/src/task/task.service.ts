@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTaskInput } from './dto/task.dto';
+import { CreateTaskInput, MoveTaskInput } from './dto/task.dto';
 import { UUID } from 'crypto';
 import { PrismaService } from 'prisma/prisma.service';
 
@@ -26,23 +26,41 @@ export class TaskService {
     });
   }
 
-  async move(columnUUID: UUID, taskUUID: UUID, index: number) {
-    return this.prisma.task.update({
-      where: { uuid: taskUUID },
-      data: {
-        column: {
-          connect: { uuid: columnUUID },
-        },
-        order: index,
-      },
-    });
-  }
+  async move(moveTask: MoveTaskInput) {
+    const { columnUUID, taskUUID, order, sourceColId, destColId } = moveTask;
 
-  async reorder(taskUUID: UUID, order: number) {
-    return this.prisma.task.update({
-      where: { uuid: taskUUID },
-      data: { order: order },
+    if (sourceColId != destColId) {
+      await this.prisma.task.update({
+        where: { uuid: taskUUID },
+        data: {
+          column: {
+            connect: { uuid: columnUUID },
+          },
+          order: order,
+        },
+      });
+    }
+
+    const tasks = await this.prisma.task.findMany({
+      where: { columnId: columnUUID },
+      orderBy: { order: 'asc' },
     });
+
+    const fromIndex = tasks.findIndex((t) => t.uuid === taskUUID);
+    if (fromIndex === -1) return;
+
+    const [movedTask] = tasks.splice(fromIndex, 1);
+
+    tasks.splice(order, 0, movedTask);
+
+    return await this.prisma.$transaction(
+      tasks.map((t, i) =>
+        this.prisma.task.update({
+          where: { id: t.id },
+          data: { order: i },
+        }),
+      ),
+    );
   }
 
   async remove(taskUUID: UUID) {
