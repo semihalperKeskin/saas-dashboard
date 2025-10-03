@@ -1,6 +1,8 @@
 import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import Modal from "../Modal";
+import { useAppDispatch } from "~/app/hooks";
+import { addTaskCard } from "~/features/boardSlice";
 
 type AddTaskCardProps = {
   columnUUID: string;
@@ -9,10 +11,14 @@ type AddTaskCardProps = {
 function AddTaskCard({ columnUUID }: AddTaskCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const [inputState, setInputState] = useState("");
+  const [inputState, setInputState] = useState<string>("");
+
+  const dispatch = useAppDispatch();
 
   const handleAddColumn = async () => {
     if (inputState.trim() === "") return;
+
+    dispatch(addTaskCard({ columnUUID, content: inputState }));
 
     try {
       const res = await fetch("/api/task", {
@@ -20,13 +26,13 @@ function AddTaskCard({ columnUUID }: AddTaskCardProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ content: inputState, column: columnUUID }),
+        body: JSON.stringify({ content: inputState, columnUUID: columnUUID }),
       });
 
       if (!res.ok) throw new Error("API error");
 
-      console.log("Yeni kolon eklendi:", inputState);
       setInputState("");
+      setIsOpen(false);
     } catch (error) {
       console.error("Error adding column:", error);
     }
@@ -48,7 +54,7 @@ function AddTaskCard({ columnUUID }: AddTaskCardProps) {
         onSubmit={handleAddColumn}
         inputState={inputState}
         setInputState={setInputState}
-        actionButonLabel="Task"
+        actionButtonLabel="Task"
       />
     </div>
   );

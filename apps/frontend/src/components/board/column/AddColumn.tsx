@@ -1,14 +1,20 @@
 import { PlusIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import Modal from "../Modal";
+import { addColumn } from "~/features/boardSlice";
+import { useAppDispatch } from "~/app/hooks";
 
 function AddColumn() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const [inputState, setInputState] = useState("");
+  const [inputState, setInputState] = useState<string>("");
+
+  const dispatch = useAppDispatch();
 
   const handleAddColumn = async () => {
     if (inputState.trim() === "") return;
+
+    dispatch(addColumn({ title: inputState }));
 
     try {
       const res = await fetch("/api/column", {
@@ -18,11 +24,11 @@ function AddColumn() {
         },
         body: JSON.stringify({ title: inputState }),
       });
-      
+
       if (!res.ok) throw new Error("API error");
 
-      console.log("Yeni kolon eklendi:", inputState);
       setInputState("");
+      setIsOpen(false);
     } catch (error) {
       console.error("Error adding column:", error);
     }
@@ -44,7 +50,7 @@ function AddColumn() {
         onSubmit={handleAddColumn}
         inputState={inputState}
         setInputState={setInputState}
-        actionButonLabel="Column"
+        actionButtonLabel="Column"
       />
     </div>
   );
