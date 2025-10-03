@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import Column from "~/features/columnSlice";
+import Column from "~/features/boardSlice";
 
 export const store = configureStore({
   reducer: {

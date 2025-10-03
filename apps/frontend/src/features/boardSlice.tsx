@@ -27,8 +27,43 @@ const columnSlice = createSlice({
   name: "column",
   initialState,
   reducers: {
-    addColumn: (state, action: PayloadAction<BoardStateInput>) => {
-      state.entities.push(action.payload);
+    addColumn: (state, action: PayloadAction<{ title: string }>) => {
+      const newNum = () => {
+        return state.entities.length + 1;
+      };
+
+      const newColumn: BoardStateInput = {
+        id: newNum(),
+        order: newNum(),
+        tasks: [],
+        uuid: crypto.randomUUID(),
+        createDate: new Date(),
+        updateDate: new Date(),
+        title: action.payload.title,
+      };
+
+      state.entities.push(newColumn);
+    },
+    addTaskCard: (
+      state,
+      action: PayloadAction<{ columnUUID: string; content: string }>
+    ) => {
+      const { columnUUID, content } = action.payload;
+      const column = state.entities.find((col) => col.uuid === columnUUID);
+
+      if (!column) return;
+
+      const newTask = {
+        id: column.tasks.length + 1,
+        order: column.tasks.length + 1,
+        content,
+        column: column.uuid,
+        uuid: crypto.randomUUID(),
+        createDate: new Date(),
+        updateDate: new Date(),
+      };
+
+      column.tasks.push(newTask);
     },
     moveTaskToAnotherColumn: (
       state,
@@ -58,34 +93,25 @@ const columnSlice = createSlice({
     moveTaskWithinSameColumn: (
       state,
       action: PayloadAction<{
-        colId: string;
+        sourceColId: string;
         taskId: string;
         destIndex: number;
       }>
     ) => {
-      const { colId, taskId, destIndex } = action.payload;
+      const { sourceColId, taskId, destIndex } = action.payload;
 
-      const column = state.entities.find((col) => col.uuid === colId);
+      const column = state.entities.find((col) => col.uuid === sourceColId);
       if (!column) return;
-      
+
       const taskIndex = column.tasks.findIndex((task) => task.uuid === taskId);
       if (taskIndex === -1) return;
       const [movedTask] = column.tasks.splice(taskIndex, 1);
       column.tasks.splice(destIndex, 0, movedTask);
     },
-    updateColumn: (state, action: PayloadAction<BoardStateInput>) => {
-      const index = state.entities.findIndex(
-        (col) => col.uuid === action.payload.uuid
-      );
-      if (index !== -1) {
-        state.entities[index] = action.payload;
-      }
-    },
-    deleteColumn: (state, action: PayloadAction<string>) => {
-      state.entities.map((col) => {
+    deleteTask: (state, action: PayloadAction<string>) => {
+      for (const col of state.entities) {
         col.tasks = col.tasks.filter((task) => task.uuid !== action.payload);
-        return col;
-      });
+      }
     },
   },
   extraReducers: (builder) => {
@@ -103,7 +129,12 @@ const columnSlice = createSlice({
   },
 });
 
-export const { addColumn, moveTaskToAnotherColumn, moveTaskWithinSameColumn, updateColumn, deleteColumn } =
-  columnSlice.actions;
+export const {
+  addColumn,
+  addTaskCard,
+  moveTaskToAnotherColumn,
+  moveTaskWithinSameColumn,
+  deleteTask,
+} = columnSlice.actions;
 
 export default columnSlice.reducer;
