@@ -1,38 +1,88 @@
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { BoardStateInput } from "@vizionboard/validation";
-import { useEffect, useState } from "react";
-import Column from "./column/Column";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "~/app/store";
+import {
+  fetchColumns,
+  moveTaskToAnotherColumn,
+  moveTaskWithinSameColumn,
+} from "~/features/boardSlice";
 import AddColumn from "./column/AddColumn";
+import Column from "./column/Column";
+import { useAppDispatch } from "~/app/hooks";
 
 function Board() {
-  const [columns, setColumns] = useState<BoardStateInput[]>([]);
+  const dispatch = useAppDispatch();
 
-  async function getData() {
-    const url = "/api/column";
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      result.sort(
-        (a: BoardStateInput, b: BoardStateInput) =>
-          (a.order ?? 0) - (b.order ?? 0)
-      );
-      setColumns(result);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error(error.message);
-      } else {
-        console.error(String(error));
-      }
-    }
-  }
+  const columns = useSelector(
+    (state: RootState) => state.column.entities as BoardStateInput[]
+  );
 
   useEffect(() => {
-    getData();
-  }, []);
+    dispatch(fetchColumns());
+  }, [dispatch]);
+
+  const getColumnById = (id: string): BoardStateInput | undefined => {
+    return columns.find((col) => col.uuid === id);
+  };
+
+  const handleLocalMove = (
+    startCol: BoardStateInput,
+    finishCol: BoardStateInput,
+    taskId: string,
+    source: { droppableId: string; index: number },
+    destination: { droppableId: string; index: number }
+  ) => {
+    if (startCol !== finishCol) {
+      dispatch(
+        moveTaskToAnotherColumn({
+          sourceColId: source.droppableId,
+          destColId: destination.droppableId,
+          taskId: taskId,
+          destIndex: destination.index,
+        })
+      );
+    } else {
+      dispatch(
+        moveTaskWithinSameColumn({
+          sourceColId: source.droppableId,
+          taskId: taskId,
+          destIndex: destination.index,
+        })
+      );
+    }
+  };
+
+  const syncWithBackend = (
+    finishColUUID: string,
+    draggableId: string,
+    source: { droppableId: string; index: number },
+    destination: { droppableId: string; index: number }
+  ) => {
+    fetch("/api/task/move", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        columnUUID: finishColUUID,
+        taskUUID: draggableId,
+        order: destination.index,
+        sourceColId: source.droppableId,
+        destColId: destination.droppableId,
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Response status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .catch((error) => {
+        console.error("Error moving task:", error);
+      });
+  };
 
   function handleDragEnd(result: DropResult) {
     const { source, destination, draggableId } = result;
@@ -46,110 +96,20 @@ function Board() {
       return;
     }
 
-    const startCol = columns.find((col) => col.uuid === source.droppableId);
-    const finishCol = columns.find(
-      (col) => col.uuid === destination.droppableId
-    );
+    const startCol = getColumnById(source.droppableId);
+    const finishCol = getColumnById(destination.droppableId);
 
-    if (startCol !== finishCol) {
-      setColumns((prevColumns) => {
-        const newColumns = [...prevColumns];
+    if (!startCol || !finishCol) return;
 
-        const startCol = newColumns.find(
-          (col) => col.uuid === source.droppableId
-        );
-        const finishCol = newColumns.find(
-          (col) => col.uuid === destination.droppableId
-        );
-
-        if (!startCol || !finishCol) return prevColumns;
-
-        const taskIndex = startCol.tasks.findIndex(
-          (task) => task.uuid === draggableId
-        );
-        if (taskIndex === -1) return prevColumns;
-
-        const [movedTask] = startCol.tasks.splice(taskIndex, 1);
-
-        finishCol.tasks.splice(destination.index, 0, movedTask);
-
-        return newColumns;
-      });
-
-      fetch("/api/task/move", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          columnUUID: finishCol!.uuid,
-          taskUUID: draggableId,
-          index: destination.index,
-        }),
-      })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error(`Response status: ${res.status}`);
-          }
-          return res.json();
-        })
-        .catch((error) => {
-          console.error("Error moving task:", error);
-        });
-    } else {
-      setColumns((prev) => {
-        return prev.map((c) => {
-          if (c.uuid !== source.droppableId) return c;
-
-          const tasks = [...c.tasks];
-          const [moved] = tasks.splice(source.index, 1);
-
-          const insertIndex =
-            source.index != destination.index
-              ? destination.index
-              : source.index;
-
-          tasks.splice(insertIndex, 0, moved);
-
-          return { ...c, tasks };
-        });
-      });
-
-      fetch("/api/task/reorder", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          columnUUID: startCol!.uuid,
-          taskUUID: draggableId,
-          fromIndex: source.index,
-          toIndex: destination.index,
-        }),
-      })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error(`Response status: ${res.status}`);
-          }
-          return res.json();
-        })
-        .catch((error) => {
-          console.error("Error reordering task:", error);
-        });
-    }
+    handleLocalMove(startCol, finishCol, draggableId, source, destination);
+    syncWithBackend(finishCol.uuid, draggableId, source, destination);
   }
 
   return (
     <div className="space-y-4">
       <AddColumn />
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
-            gap: 16,
-          }}
-        >
+        <div className="grid grid-cols-3 gap-4">
           {columns &&
             columns.map((column) => {
               return <Column key={column.uuid} column={column} />;
