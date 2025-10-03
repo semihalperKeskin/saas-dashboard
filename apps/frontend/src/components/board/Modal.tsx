@@ -1,10 +1,12 @@
+import { XMarkIcon } from "@heroicons/react/16/solid";
+
 type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSubmit?: () => void;
   inputState?: string;
   setInputState?: (value: string) => void;
-  actionButonLabel: string;
+  actionButtonLabel: string;
 };
 
 export default function Modal({
@@ -13,13 +15,13 @@ export default function Modal({
   onSubmit,
   inputState,
   setInputState,
-  actionButonLabel,
+  actionButtonLabel,
 }: ModalProps) {
   const handleSubmit = () => {
     if (setInputState) {
       setInputState("");
     }
-    
+
     if (onSubmit) {
       onSubmit();
     }
@@ -42,7 +44,7 @@ export default function Modal({
                 onClick={onClose}
                 className="absolute right-2 text-gray-400 hover:text-gray-600"
               >
-                ✕
+                <XMarkIcon className="w-6 h-6 cursor-pointer" />
               </button>
             </div>
             <div>Enter New Item Name</div>
@@ -59,7 +61,7 @@ export default function Modal({
               onClick={handleSubmit}
               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
             >
-              Add {actionButonLabel}
+              Add {actionButtonLabel}
             </button>
           </div>
         </div>
