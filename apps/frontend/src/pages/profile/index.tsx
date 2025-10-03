@@ -29,8 +29,7 @@ function Profile() {
         }
         return response.json();
       })
-      .then((result) => {
-        console.log("Kullanıcı başarıyla güncellendi:", result);
+      .then(() => {
         const message: string = "Successfully updated your profile.";
         toast.success(message, {
           position: "bottom-left",

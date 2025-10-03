@@ -25,8 +25,7 @@ export function Sidebar() {
       },
     })
       .then((res) => res.json())
-      .then((data) => {
-        console.log("Logout başarılı:", data);
+      .then(() => {
         localStorage.removeItem("access_token");
         navigate("/auth/login", { replace: true });
       })
