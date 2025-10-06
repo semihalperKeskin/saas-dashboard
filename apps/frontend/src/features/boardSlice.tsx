@@ -113,6 +113,12 @@ const columnSlice = createSlice({
         col.tasks = col.tasks.filter((task) => task.uuid !== action.payload);
       }
     },
+    deleteColumn: (state, action: PayloadAction<string>) => {
+      console.log("Deleting column with UUID:", action.payload);
+      state.entities = state.entities.filter(
+        (col) => col.uuid !== action.payload
+      );
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -135,6 +141,7 @@ export const {
   moveTaskToAnotherColumn,
   moveTaskWithinSameColumn,
   deleteTask,
+  deleteColumn,
 } = columnSlice.actions;
 
 export default columnSlice.reducer;
