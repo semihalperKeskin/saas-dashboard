@@ -3,76 +3,96 @@ import {
   ChartBarSquareIcon,
   RectangleStackIcon,
   UserIcon,
-  XMarkIcon,
 } from "@heroicons/react/16/solid";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
-export function Sidebar() {
+export function Sidebar({ isOpen }: { isOpen: boolean }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const logout = () => {
+  const sidebarItems = [
+    {
+      icon: <RectangleStackIcon className="h-4" />,
+      label: "Board",
+      to: "/",
+    },
+    {
+      icon: <UserIcon className="h-4" />,
+      label: "Profile",
+      to: "/profile",
+    },
+    {
+      icon: <ChartBarSquareIcon className="h-4" />,
+      label: "Statistics",
+      to: "/statistics",
+    },
+  ];
+
+  const logout = async () => {
     const token = localStorage.getItem("access_token");
+    if (!token) return console.warn("Token bulunamadı.");
 
-    if (!token) {
-      console.warn("Token bulunamadı.");
-      return;
-    }
-    fetch("/api/auth/logout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then(() => {
-        localStorage.removeItem("access_token");
-        navigate("/auth/login", { replace: true });
-      })
-      .catch((err) => {
-        console.error("Hata:", err);
+    try {
+      const res = await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
+
+      if (!res.ok) {
+        console.warn("Logout is failed.");
+      }
+
+      localStorage.removeItem("access_token");
+      navigate("/auth/login", { replace: true });
+    } catch (err) {
+      console.error("Error:", err);
+    }
   };
 
   const baseButtonClass =
-    "flex items-center gap-2 text-left px-3 py-2 rounded-md hover:bg-gray-100 cursor-pointer";
+    "flex items-center gap-2 text-left px-3 py-2 rounded-md transition-colors duration-150 cursor-pointer";
 
   return (
-    <div className="w-screen h-screen md:w-52 lg:w-64 md:h-full flex flex-col justify-between p-4 bg-white border-r border-gray-200">
+    <aside
+      className={`transition-all duration-300 overflow-hidden ${
+        isOpen
+          ? "w-52 lg:w-64 h-full flex flex-col justify-between p-4 bg-white border-r border-gray-200"
+          : "w-0"
+      }`}
+    >
       <div>
-        <div className="mb-4 grid grid-cols-[1fr_auto] items-center justify-between">
+        <div className="mb-4 flex justify-between">
           <img src="assets/logo.png" alt="Logo" className="w-12 h-12" />
-          <XMarkIcon
-            className="w-6 h-6 md:hidden cursor-pointer"
-            onClick={() =>
-              document.querySelector("aside")?.classList.add("hidden")
-            }
-          />
         </div>
 
         <nav className="flex flex-col gap-1">
-          <Link to="/" className={baseButtonClass}>
-            <RectangleStackIcon className="w-5 h-5" />
-            <span>Board</span>
-          </Link>
-          <Link to="/profile" className={baseButtonClass}>
-            <UserIcon className="w-5 h-5" />
-            <span>Profile</span>
-          </Link>
-          <Link to="/statistics" className={baseButtonClass}>
-            <ChartBarSquareIcon className="w-5 h-5" />
-            <span>Statistics</span>
-          </Link>
+          {sidebarItems.map((item) => {
+            const isActive = location.pathname.startsWith(item.to);
+            const itemClass = `${baseButtonClass} ${
+              isActive
+                ? "bg-gray-200 font-medium text-gray-900"
+                : "text-gray-600 hover:bg-gray-100"
+            }`;
+            return (
+              <Link to={item.to} className={itemClass} key={item.label}>
+                {item.icon}
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
         </nav>
       </div>
 
       <button
-        onClick={() => logout()}
-        className="flex items-center gap-2 px-3 py-2 text-red-400 hover:bg-red-200 hover:text-red-600 cursor-pointer"
+        onClick={logout}
+        className="flex items-center gap-2 px-3 py-2 text-red-500 hover:bg-red-100 hover:text-red-600 rounded-md cursor-pointer duration-150"
       >
         <ArrowLeftStartOnRectangleIcon className="w-5 h-5" />
         Logout
       </button>
-    </div>
+    </aside>
   );
 }
