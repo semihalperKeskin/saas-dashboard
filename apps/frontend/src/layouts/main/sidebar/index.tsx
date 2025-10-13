@@ -70,7 +70,7 @@ export function Sidebar({ isOpen }: { isOpen: boolean }) {
 
         <nav className="flex flex-col gap-1">
           {sidebarItems.map((item) => {
-            const isActive = location.pathname.startsWith(item.to);
+            const isActive = location.pathname.endsWith(item.to);
             const itemClass = `${baseButtonClass} ${
               isActive
                 ? "bg-gray-200 font-medium text-gray-900"
