@@ -6,7 +6,7 @@ import {
 } from "@heroicons/react/16/solid";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
-export function Sidebar({ isOpen }: { isOpen: boolean }) {
+export function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -56,18 +56,8 @@ export function Sidebar({ isOpen }: { isOpen: boolean }) {
     "flex items-center gap-2 text-left px-3 py-2 rounded-md transition-colors duration-150 cursor-pointer";
 
   return (
-    <aside
-      className={`transition-all duration-300 overflow-hidden ${
-        isOpen
-          ? "w-52 lg:w-64 h-full flex flex-col justify-between p-4 bg-white border-r border-gray-200"
-          : "w-0"
-      }`}
-    >
+    <aside className="flex flex-col justify-between w-52 lg:w-64 p-4 bg-white border-r border-gray-200">
       <div>
-        <div className="mb-4 flex justify-between">
-          <img src="assets/logo.png" alt="Logo" className="w-12 h-12" />
-        </div>
-
         <nav className="flex flex-col gap-1">
           {sidebarItems.map((item) => {
             const isActive = location.pathname.endsWith(item.to);
