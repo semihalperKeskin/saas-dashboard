@@ -38,9 +38,9 @@ function AddColumn() {
     <div>
       <button
         onClick={() => setIsOpen(true)}
-        className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+        className="cursor-pointer flex items-center rounded-md p-2 text-sm bg-blue-100 hover:bg-blue-300 text-blue-800"
       >
-        <PlusIcon className="h-5 w-5 inline-block mr-2" />
+        <PlusIcon className="h-5 w-5" />
         Add Column
       </button>
 
