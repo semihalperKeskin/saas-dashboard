@@ -54,11 +54,7 @@ export class AuthService {
       where: { email: data.email },
     });
 
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    if (!user.password) {
+    if (!user || !user.password) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
@@ -75,6 +71,7 @@ export class AuthService {
       sub: user.id,
       email: user.email,
     };
+
     const token = this.jwtService.sign(payload);
 
     const tokenData = await this.prisma.userToken.create({
@@ -87,9 +84,7 @@ export class AuthService {
       throw new UnauthorizedException('Failed to create token');
     }
 
-    return {
-      access_token: token,
-    };
+    return { token };
   }
 
   async register(data: RegisterInput) {
