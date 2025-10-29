@@ -5,6 +5,7 @@ import {
   UserIcon,
 } from "@heroicons/react/16/solid";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Bounce, toast } from "react-toastify";
 
 export function Sidebar() {
   const navigate = useNavigate();
@@ -29,27 +30,34 @@ export function Sidebar() {
   ];
 
   const logout = async () => {
-    const token = localStorage.getItem("access_token");
-    if (!token) return console.warn("Token bulunamadı.");
+    fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Logout is failed.");
+        }
 
-    try {
-      const res = await fetch("/api/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        navigate("/auth/login", { replace: true });
+      })
+      .catch((error) => {
+        const displayMessage: string =
+          error.message || "Logout is failed due to a network error.";
+        toast.error(displayMessage, {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+          transition: Bounce,
+        });
       });
-
-      if (!res.ok) {
-        console.warn("Logout is failed.");
-      }
-
-      localStorage.removeItem("access_token");
-      navigate("/auth/login", { replace: true });
-    } catch (err) {
-      console.error("Error:", err);
-    }
   };
 
   const baseButtonClass =

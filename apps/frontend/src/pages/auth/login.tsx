@@ -21,25 +21,26 @@ function Login() {
 
     fetch("/api/auth/login", {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
     })
-      .then((res: Response) => {
+      .then(async (res) => {
         if (!res.ok) {
-          throw new Error("Network response was not ok");
+          const errorData = await res.json();
+
+          throw new Error(errorData.message || "Login failed");
         }
-        return res.json();
-      })
-      .then((data) => {
-        localStorage.setItem("access_token", data.access_token);
+
         navigate("/");
       })
-      .catch(async () => {
-        const message: string = "Invalid email or password. Please try again.";
-        toast.error(message, {
-          position: "bottom-left",
+      .catch((error) => {
+        const displayMessage: string =
+          error.message || "Invalid email or password. Please try again.";
+        toast.error(displayMessage, {
+          position: "bottom-right",
           autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: false,

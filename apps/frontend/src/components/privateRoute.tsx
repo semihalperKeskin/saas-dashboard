@@ -6,24 +6,21 @@ import { UserContext } from "~/contexts/UserContext";
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [user, setUser] = useState<UserInput | null>(null);
-  const token = localStorage.getItem("access_token");
 
   useEffect(() => {
-    if (!token) {
-      setIsValid(false);
-      return;
-    }
+    validation();
+  }, []);
 
+  const validation = () => {
     fetch("/api/auth/validation", {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => {
         if (res.ok) {
-          setIsValid(true);
           return res.json();
         } else {
           throw new Error("Invalid");
@@ -31,12 +28,12 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
       })
       .then((data) => {
         setUser(data);
+        setIsValid(true);
       })
       .catch(() => {
         setIsValid(false);
-        localStorage.removeItem("access_token");
       });
-  }, [token]);
+  };
 
   if (isValid === null) return <div>Yükleniyor...</div>;
   if (isValid === false) return <Navigate to="/auth/login" replace />;
