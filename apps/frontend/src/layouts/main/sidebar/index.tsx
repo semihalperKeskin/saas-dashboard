@@ -6,10 +6,12 @@ import {
 } from "@heroicons/react/16/solid";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Bounce, toast } from "react-toastify";
+import { useAppDispatch } from "~/app/hooks";
 
 export function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useAppDispatch();
 
   const sidebarItems = [
     {
@@ -33,15 +35,13 @@ export function Sidebar() {
     fetch("/api/auth/logout", {
       method: "POST",
       credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
     })
       .then((res) => {
         if (!res.ok) {
           throw new Error("Logout is failed.");
         }
 
+        dispatch({ type: "user/clearUser" });
         navigate("/auth/login", { replace: true });
       })
       .catch((error) => {

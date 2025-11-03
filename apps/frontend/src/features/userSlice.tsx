@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserInput } from "@vizionboard/validation";
 
 export const fetchUser = createAsyncThunk(
@@ -29,7 +29,14 @@ const initialState: UserState = {
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    setUser: (state, action: PayloadAction<UserInput>) => {
+      state.entities = action.payload;
+    },
+    clearUser: (state) => {
+      state.entities = {} as UserInput;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchUser.pending, (state) => {
