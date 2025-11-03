@@ -21,6 +21,9 @@ function UserForm() {
   const onSubmit: SubmitHandler<UpdateUserInput> = (data) => {
     fetch("/api/user/me", {
       method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(data),
       credentials: "include",
     })
