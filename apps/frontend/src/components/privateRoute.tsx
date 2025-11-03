@@ -1,11 +1,11 @@
 import { UserInput } from "@vizionboard/validation";
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { UserContext } from "~/contexts/UserContext";
+import { useAppDispatch } from "~/app/hooks";
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const [isValid, setIsValid] = useState<boolean | null>(null);
-  const [user, setUser] = useState<UserInput | null>(null);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     validation();
@@ -27,7 +27,7 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
         }
       })
       .then((data) => {
-        setUser(data);
+        dispatch({ type: "user/setUser", payload: data as UserInput });
         setIsValid(true);
       })
       .catch(() => {
@@ -38,7 +38,7 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   if (isValid === null) return <div>Yükleniyor...</div>;
   if (isValid === false) return <Navigate to="/auth/login" replace />;
 
-  return <UserContext.Provider value={user}>{children}</UserContext.Provider>;
+  return <>{children}</>;
 };
 
 export default PrivateRoute;
