@@ -1,17 +1,14 @@
 import {
   Body,
   Get,
-  Param,
   Patch,
   Req,
   UnauthorizedException,
   UseGuards,
-  UsePipes,
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UpdateUserInput, UpdateUserSchema } from './dto/update-user.dto';
-import { ZodValidationPipe } from 'src/common/pipes/ZodValidationPipes';
+import { UpdateUserInput } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 
@@ -23,16 +20,23 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.userService.findOne(+id);
+  @Get('me')
+  @UseGuards(AuthGuard('jwt'))
+  findOne(@Req() req: Request) {
+    const user = req.user as { id: number; username: string } | undefined;
+
+    if (!user || typeof user.id !== 'number') {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    return this.userService.findOne(user.id);
   }
 
   @Patch('me')
   @UseGuards(AuthGuard('jwt'))
-  @UsePipes(new ZodValidationPipe(UpdateUserSchema))
   updateUser(@Req() req: Request, @Body() userData: UpdateUserInput) {
-    const user = req.user as { id: number };
+    const user = req.user as { id: number; username: string } | undefined;
+
     if (!user || typeof user.id !== 'number') {
       throw new UnauthorizedException('User not authenticated');
     }

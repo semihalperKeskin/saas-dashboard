@@ -1,26 +1,28 @@
-import { UpdateUserInput } from "@vizionboard/validation";
+import { UpdateUserInput, UserInput } from "@vizionboard/validation";
+import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Bounce, toast } from "react-toastify";
-import { useUser } from "~/contexts/UserContext";
+import { useAppDispatch, useAppSelector } from "~/app/hooks";
+import { RootState } from "~/app/store";
+import { fetchUser } from "~/features/userSlice";
 
 function UserForm() {
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(
+    (state: RootState) => state.user.entities as UserInput
+  );
+
+  useEffect(() => {
+    dispatch(fetchUser());
+  }, [dispatch]);
+
   const { register, handleSubmit } = useForm<UpdateUserInput>();
 
   const onSubmit: SubmitHandler<UpdateUserInput> = (data) => {
-    const token = localStorage.getItem("access_token");
-
-    if (!token) {
-      console.error("No token found");
-      return;
-    }
-
     fetch("/api/user/me", {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
       body: JSON.stringify(data),
+      credentials: "include",
     })
       .then(async (response) => {
         if (!response.ok) {
@@ -46,7 +48,6 @@ function UserForm() {
         console.error("Güncelleme hatası:", error);
       });
   };
-  const user = useUser();
 
   const style = {
     label: "flex flex-col mb-4",
