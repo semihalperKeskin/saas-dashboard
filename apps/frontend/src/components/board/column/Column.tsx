@@ -5,10 +5,10 @@ import AddTaskCard from "../task/AddTaskCard";
 import { TrashIcon } from "@heroicons/react/16/solid";
 import { useAppDispatch } from "~/app/hooks";
 import { deleteColumn } from "~/features/boardSlice";
+import apiClient from "~/api/client";
 
 function Column({ column }: { column: BoardStateInput }) {
   const dispatch = useAppDispatch();
-
 
   const removeColumn = (uuid: string) => {
     const alert = window.confirm(
@@ -17,22 +17,14 @@ function Column({ column }: { column: BoardStateInput }) {
 
     if (!alert) return;
 
-    fetch(`/api/column/${uuid}`, {
+    apiClient(`/api/column/${uuid}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to delete column");
-        }
+    });
 
-        dispatch(deleteColumn(uuid));
-      })
-      .catch((err) => {
-        console.error("Error:", err);
-      });
+    dispatch(deleteColumn(uuid));
   };
 
   return (
@@ -49,7 +41,10 @@ function Column({ column }: { column: BoardStateInput }) {
           <div className="m-0 mb-4 flex">
             <div className="flex-1">{column.title}</div>
             <AddTaskCard columnUUID={column.uuid.toString()} />
-            <TrashIcon onClick={() => removeColumn(column.uuid)} className="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer ml-2" />
+            <TrashIcon
+              onClick={() => removeColumn(column.uuid)}
+              className="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer ml-2"
+            />
           </div>
 
           {column.tasks &&

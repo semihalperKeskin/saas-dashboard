@@ -3,6 +3,7 @@ import { useState } from "react";
 import Modal from "../Modal";
 import { addColumn } from "~/features/boardSlice";
 import { useAppDispatch } from "~/app/hooks";
+import apiClient from "~/api/client";
 
 function AddColumn() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,22 +17,16 @@ function AddColumn() {
 
     dispatch(addColumn({ title: inputState }));
 
-    try {
-      const res = await fetch("/api/column", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ title: inputState }),
-      });
+    apiClient("/api/column", {
+      method: "POST",
+      body: JSON.stringify({ title: inputState }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-      if (!res.ok) throw new Error("API error");
-
-      setInputState("");
-      setIsOpen(false);
-    } catch (error) {
-      console.error("Error adding column:", error);
-    }
+    setInputState("");
+    setIsOpen(false);
   };
 
   return (

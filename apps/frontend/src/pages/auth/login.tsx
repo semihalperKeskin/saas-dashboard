@@ -2,7 +2,7 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import { AuthInput } from "@vizionboard/validation";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bounce, toast } from "react-toastify";
+import toastMessage from "~/components/toast";
 
 function Login() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -30,25 +30,17 @@ function Login() {
       .then(async (res) => {
         if (!res.ok) {
           const errorData = await res.json();
-
           throw new Error(errorData.message || "Login failed");
         }
 
+        const data = await res.json();
+        localStorage.setItem("accessToken", data.accessToken);
         navigate("/");
       })
       .catch((error) => {
         const displayMessage: string =
           error.message || "Invalid email or password. Please try again.";
-        toast.error(displayMessage, {
-          position: "bottom-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          theme: "colored",
-          transition: Bounce,
-        });
+        toastMessage(displayMessage, "error");
       });
   };
 

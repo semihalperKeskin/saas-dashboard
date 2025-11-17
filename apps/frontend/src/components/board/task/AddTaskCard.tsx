@@ -3,6 +3,7 @@ import { useState } from "react";
 import Modal from "../Modal";
 import { useAppDispatch } from "~/app/hooks";
 import { addTaskCard } from "~/features/boardSlice";
+import apiClient from "~/api/client";
 
 type AddTaskCardProps = {
   columnUUID: string;
@@ -20,22 +21,16 @@ function AddTaskCard({ columnUUID }: AddTaskCardProps) {
 
     dispatch(addTaskCard({ columnUUID, content: inputState }));
 
-    try {
-      const res = await fetch("/api/task", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ content: inputState, columnUUID: columnUUID }),
-      });
+    apiClient("/api/task", {
+      method: "POST",
+      body: JSON.stringify({ content: inputState, columnUUID: columnUUID }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-      if (!res.ok) throw new Error("API error");
-
-      setInputState("");
-      setIsOpen(false);
-    } catch (error) {
-      console.error("Error adding column:", error);
-    }
+    setInputState("");
+    setIsOpen(false);
   };
 
   return (

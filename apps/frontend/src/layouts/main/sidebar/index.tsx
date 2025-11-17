@@ -5,8 +5,8 @@ import {
   UserIcon,
 } from "@heroicons/react/16/solid";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Bounce, toast } from "react-toastify";
 import { useAppDispatch } from "~/app/hooks";
+import toastMessage from "~/components/toast";
 
 export function Sidebar() {
   const navigate = useNavigate();
@@ -42,21 +42,13 @@ export function Sidebar() {
         }
 
         dispatch({ type: "user/clearUser" });
+        localStorage.removeItem("accessToken");
         navigate("/auth/login", { replace: true });
       })
       .catch((error) => {
         const displayMessage: string =
           error.message || "Logout is failed due to a network error.";
-        toast.error(displayMessage, {
-          position: "bottom-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          theme: "colored",
-          transition: Bounce,
-        });
+        toastMessage(displayMessage, "error");
       });
   };
 

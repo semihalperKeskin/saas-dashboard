@@ -1,10 +1,11 @@
 import { UpdateUserInput, UserInput } from "@vizionboard/validation";
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Bounce, toast } from "react-toastify";
+import apiClient from "~/api/client";
 import { useAppDispatch, useAppSelector } from "~/app/hooks";
 import { RootState } from "~/app/store";
 import { fetchUser } from "~/features/userSlice";
+import toastMessage from "../toast";
 
 function UserForm() {
   const dispatch = useAppDispatch();
@@ -18,38 +19,23 @@ function UserForm() {
 
   const { register, handleSubmit } = useForm<UpdateUserInput>();
 
-  const onSubmit: SubmitHandler<UpdateUserInput> = (data) => {
-    fetch("/api/user/me", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-      credentials: "include",
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Bir hata oluştu");
-        }
-        return response.json();
-      })
-      .then(() => {
-        const message: string = "Successfully updated your profile.";
-        toast.success(message, {
-          position: "bottom-left",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          theme: "colored",
-          transition: Bounce,
-        });
-      })
-      .catch((error) => {
-        console.error("Güncelleme hatası:", error);
+  const onSubmit: SubmitHandler<UpdateUserInput> = async (data) => {
+    try {
+      await apiClient("/api/user/me", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+        credentials: "include",
       });
+
+      const message: string = "Successfully updated your profile.";
+      toastMessage(message, "success");
+    } catch (error) {
+      const message: string = "Failed to update your profile.";
+      toastMessage(message, "error");
+    }
   };
 
   const style = {

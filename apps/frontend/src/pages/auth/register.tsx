@@ -1,18 +1,16 @@
 import { useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import { useNavigate } from "react-router-dom";
-import { Bounce, toast } from "react-toastify";
 import { AuthInput, RegisterSchema } from "@vizionboard/validation";
 import { z } from "zod";
+import toastMessage from "~/components/toast";
 
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState<AuthInput>(
-    {
-      email: "",
-      password: "",
-    }
-  );
+  const [formData, setFormData] = useState<AuthInput>({
+    email: "",
+    password: "",
+  });
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,17 +18,10 @@ function Register() {
   };
 
   function showZodErrors(error: z.ZodError) {
-    const messages: string = error.issues.map((issue) => issue.message).join(", ");
-    toast.error(messages, {
-      position: "bottom-left",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: false,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "colored",
-      transition: Bounce,
-    });
+    const messages: string = error.issues
+      .map((issue) => issue.message)
+      .join(", ");
+    toastMessage(messages, "error");
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -57,22 +48,19 @@ function Register() {
         return response.json();
       })
       .then((data: { message: string }) => {
-        toast.success(data.message);
+        toastMessage(
+          data.message || "Registration successful. Please log in.",
+          "success"
+        );
         navigate("/auth/login");
       })
       .catch(async (error: unknown) => {
-        const message = error instanceof Error ? error.message : "Unexpected error";
-        toast.error(message || "Unexpected error", {
-          position: "bottom-left",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          transition: Bounce,
-        });
+        const message =
+          error instanceof Error ? error.message : "Unexpected error";
+        toastMessage(
+          message || "Registration failed. Please try again.",
+          "error"
+        );
       });
   };
 

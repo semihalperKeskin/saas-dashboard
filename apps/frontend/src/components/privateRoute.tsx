@@ -1,11 +1,8 @@
-import { UserInput } from "@vizionboard/validation";
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { useAppDispatch } from "~/app/hooks";
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const [isValid, setIsValid] = useState<boolean | null>(null);
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     validation();
@@ -27,8 +24,7 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
         }
       })
       .then((data) => {
-        dispatch({ type: "user/setUser", payload: data as UserInput });
-        setIsValid(true);
+        setIsValid(data.isValid);
       })
       .catch(() => {
         setIsValid(false);

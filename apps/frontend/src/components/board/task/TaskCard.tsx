@@ -1,6 +1,7 @@
 import { Draggable } from "@hello-pangea/dnd";
 import { XMarkIcon } from "@heroicons/react/16/solid";
 import { TaskInput } from "@vizionboard/validation";
+import apiClient from "~/api/client";
 import { useAppDispatch } from "~/app/hooks";
 import { deleteTask } from "~/features/boardSlice";
 
@@ -10,20 +11,12 @@ function TaskCard({ task, index }: { task: TaskInput; index: number }) {
   const removeTask = () => {
     dispatch(deleteTask(task.uuid));
 
-    fetch(`/api/task/${task.uuid}`, {
+    apiClient(`/api/task/${task.uuid}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to delete task");
-        }
-      })
-      .catch((err) => {
-        console.error("Error:", err);
-      });
+    });
   };
 
   return (

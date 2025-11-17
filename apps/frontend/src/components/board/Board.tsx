@@ -11,6 +11,7 @@ import {
 import AddColumn from "./column/AddColumn";
 import Column from "./column/Column";
 import { useAppDispatch } from "~/app/hooks";
+import apiClient from "~/api/client";
 
 function Board() {
   const dispatch = useAppDispatch();
@@ -60,11 +61,8 @@ function Board() {
     source: { droppableId: string; index: number },
     destination: { droppableId: string; index: number }
   ) => {
-    fetch("/api/task/move", {
+    apiClient("/api/task/move", {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({
         columnUUID: finishColUUID,
         taskUUID: draggableId,
@@ -72,16 +70,7 @@ function Board() {
         sourceColId: source.droppableId,
         destColId: destination.droppableId,
       }),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`Response status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .catch((error) => {
-        console.error("Error moving task:", error);
-      });
+    });
   };
 
   function handleDragEnd(result: DropResult) {
