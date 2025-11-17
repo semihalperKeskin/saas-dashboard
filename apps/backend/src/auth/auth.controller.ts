@@ -5,6 +5,7 @@ import {
   Req,
   Res,
   UnauthorizedException,
+  UseGuards,
   UsePipes,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -12,6 +13,7 @@ import { ZodValidationPipe } from 'src/common/pipes/ZodValidationPipes';
 import { AuthSchema, AuthInput } from './dto/auth.dto';
 import { RegisterInput, RegisterSchema } from './dto/register.dto';
 import { Request, Response } from 'express';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -23,15 +25,15 @@ export class AuthController {
     @Body() data: AuthInput,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const { token } = await this.authService.login(data);
+    const { refreshToken, accessToken } = await this.authService.login(data);
 
-    response.cookie('token', token, {
+    response.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'none',
     });
 
-    return true;
+    return { accessToken };
   }
 
   @Post('register')
@@ -41,19 +43,14 @@ export class AuthController {
   }
 
   @Post('validation')
-  async validation(@Req() req: Request) {
-    const token = req.cookies['token'] as string;
-
-    if (!token) {
-      throw new UnauthorizedException('Missing authentication token');
-    }
-
-    return this.authService.validation(token);
+  @UseGuards(AuthGuard('jwt'))
+  validation() {
+    return { isValid: true };
   }
 
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: Response, @Req() req: Request) {
-    const token = req.cookies['token'] as string;
+    const token = req.cookies['refreshToken'] as string;
 
     if (!token) {
       throw new UnauthorizedException('Missing authentication token');
@@ -61,7 +58,7 @@ export class AuthController {
 
     await this.authService.logout(token);
 
-    res.clearCookie('token');
+    res.clearCookie('refreshToken');
 
     return true;
   }

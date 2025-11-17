@@ -7,7 +7,7 @@ import { Request } from 'express';
 const cookieExtractor = (req: Request) => {
   let token = '';
   if (req && req.cookies) {
-    token = req.cookies['token'] as string;
+    token = req.cookies['refreshToken'] as string;
   }
   return token;
 };
@@ -18,7 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: cookieExtractor,
       ignoreExpiration: false,
-      secretOrKey: jwtConstants.secret as string,
+      secretOrKey: jwtConstants.refreshSecret as string,
     });
   }
 

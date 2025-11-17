@@ -8,6 +8,7 @@ import { PrismaService } from 'prisma/prisma.service';
 import { AuthInput } from './dto/auth.dto';
 import { RegisterInput } from './dto/register.dto';
 import { JwtService } from '@nestjs/jwt';
+import { jwtConstants } from './constants';
 
 @Injectable()
 export class AuthService {
@@ -17,10 +18,12 @@ export class AuthService {
   ) {}
 
   private async decodeAndFindUser(token: string) {
-    let decoded: { sub: string; email: string };
+    let decoded: { sub: string; email: string; type: string };
 
     try {
-      decoded = await this.jwtService.verify(token);
+      decoded = await this.jwtService.verifyAsync(token, {
+        secret: jwtConstants.refreshSecret,
+      });
     } catch (err) {
       console.error('JWT verify error:', err);
       throw new UnauthorizedException('Invalid token');
@@ -67,24 +70,41 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = {
+    const refreshTokenPayload = {
       sub: user.id,
       email: user.email,
+      type: 'refresh',
     };
 
-    const token = this.jwtService.sign(payload);
+    const refreshToken: string = this.jwtService.sign(refreshTokenPayload, {
+      expiresIn: '7d',
+      secret: jwtConstants.refreshSecret,
+    });
+
+    const accessTokenPayload = {
+      sub: user.id,
+      username: user.username,
+      type: 'access',
+    };
+
+    const accessToken: string = this.jwtService.sign(accessTokenPayload);
+
+    if (!refreshToken || !accessToken) {
+      throw new UnauthorizedException('Failed to create refresh token');
+    }
 
     const tokenData = await this.prisma.userToken.create({
       data: {
         userId: user.id,
-        token,
+        refreshToken,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       },
     });
     if (!tokenData) {
       throw new UnauthorizedException('Failed to create token');
     }
 
-    return { token };
+    return { refreshToken, accessToken };
   }
 
   async register(data: RegisterInput) {
@@ -112,21 +132,14 @@ export class AuthService {
     return user;
   }
 
-  async logout(token: string) {
-    const { user } = await this.decodeAndFindUser(token);
-    const tokenData = await this.findUserToken(user.id);
+  async logout(refreshToken: string) {
+    const { user } = await this.decodeAndFindUser(refreshToken);
+    const refreshTokenData = await this.findUserToken(user.id);
 
     await this.prisma.userToken.delete({
-      where: { id: tokenData.id },
+      where: { id: refreshTokenData.id },
     });
 
     return true;
-  }
-
-  async validation(token: string) {
-    const { user } = await this.decodeAndFindUser(token);
-    await this.findUserToken(user.id);
-
-    return user;
   }
 }
