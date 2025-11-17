@@ -132,6 +132,11 @@ export class AuthService {
     return user;
   }
 
+  async generateAccessToken(user: { id: number; email: string }) {
+    const payload = { sub: user.id, email: user.email, type: 'access' };
+    return this.jwtService.signAsync(payload);
+  }
+
   async logout(refreshToken: string) {
     const { user } = await this.decodeAndFindUser(refreshToken);
     const refreshTokenData = await this.findUserToken(user.id);

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Post,
+  Get,
   Req,
   Res,
   UnauthorizedException,
@@ -46,6 +47,16 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   validation() {
     return { isValid: true };
+  }
+  @Get('refresh-token')
+  @UseGuards(AuthGuard('jwt'))
+  async refreshToken(@Req() req: Request) {
+    const user = req.user as { id: number; email: string } | undefined;
+    if (!user) {
+      throw new UnauthorizedException('User not found in request');
+    }
+    const accessToken = await this.authService.generateAccessToken(user);
+    return { accessToken };
   }
 
   @Post('logout')

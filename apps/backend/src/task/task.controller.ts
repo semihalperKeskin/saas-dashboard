@@ -6,10 +6,12 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { UUID } from 'crypto';
 import { CreateTaskInput, MoveTaskInput } from '@vizionboard/validation';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('task')
 export class TaskController {
@@ -25,6 +27,7 @@ export class TaskController {
     return this.task.create(task);
   }
 
+  @UseGuards(AuthGuard('jwt-access'))
   @Put('move')
   async move(@Body() moveTask: MoveTaskInput) {
     return this.task.move(moveTask);
