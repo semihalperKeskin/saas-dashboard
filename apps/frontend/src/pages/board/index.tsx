@@ -1,12 +1,10 @@
 import { Board } from "~/components/board";
 
-function Home() {
-  
-
+function BoardPage() {
   return (
-    <div>
+    <div className="h-full">
       <Board />
     </div>
   );
 }
-export default Home;
+export default BoardPage;

@@ -56,7 +56,7 @@ export function Sidebar() {
     "flex items-center gap-2 text-left px-3 py-2 rounded-md transition-colors duration-150 cursor-pointer";
 
   return (
-    <aside className="flex flex-col justify-between w-52 lg:w-64 p-4 bg-white border-r border-gray-200">
+    <aside className="flex flex-col justify-between min-w-52 lg:w-64 p-4 bg-white border-r border-gray-200">
       <div>
         <nav className="flex flex-col gap-1">
           {sidebarItems.map((item) => {

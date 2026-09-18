@@ -33,7 +33,7 @@ function AddColumn() {
     <div>
       <button
         onClick={() => setIsOpen(true)}
-        className="cursor-pointer flex items-center rounded-md p-2 text-sm bg-blue-100 hover:bg-blue-300 text-blue-800"
+        className="cursor-pointer flex items-center rounded-md px-5 py-2 text-sm bg-blue-600 hover:bg-blue-800 text-white"
       >
         <PlusIcon className="h-5 w-5" />
         Add Column

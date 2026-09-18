@@ -12,12 +12,18 @@ import AddColumn from "./column/AddColumn";
 import Column from "./column/Column";
 import { useAppDispatch } from "~/app/hooks";
 import apiClient from "~/api/client";
+import {
+  CalendarDaysIcon,
+  ClipboardDocumentCheckIcon,
+  ClipboardDocumentIcon,
+  RectangleStackIcon,
+} from "@heroicons/react/16/solid";
 
 function Board() {
   const dispatch = useAppDispatch();
 
   const columns = useSelector(
-    (state: RootState) => state.column.entities as BoardStateInput[]
+    (state: RootState) => state.column.entities as BoardStateInput[],
   );
 
   useEffect(() => {
@@ -33,7 +39,7 @@ function Board() {
     finishCol: BoardStateInput,
     taskId: string,
     source: { droppableId: string; index: number },
-    destination: { droppableId: string; index: number }
+    destination: { droppableId: string; index: number },
   ) => {
     if (startCol !== finishCol) {
       dispatch(
@@ -42,7 +48,7 @@ function Board() {
           destColId: destination.droppableId,
           taskId: taskId,
           destIndex: destination.index,
-        })
+        }),
       );
     } else {
       dispatch(
@@ -50,7 +56,7 @@ function Board() {
           sourceColId: source.droppableId,
           taskId: taskId,
           destIndex: destination.index,
-        })
+        }),
       );
     }
   };
@@ -59,7 +65,7 @@ function Board() {
     finishColUUID: string,
     draggableId: string,
     source: { droppableId: string; index: number },
-    destination: { droppableId: string; index: number }
+    destination: { droppableId: string; index: number },
   ) => {
     apiClient("/api/task/move", {
       method: "PUT",
@@ -94,17 +100,81 @@ function Board() {
     syncWithBackend(finishCol.uuid, draggableId, source, destination);
   }
 
+  const date: Date = new Date();
+
   return (
-    <div className="space-y-4">
-      <AddColumn />
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="grid grid-cols-3 gap-4">
-          {columns &&
-            columns.map((column) => {
-              return <Column key={column.uuid} column={column} />;
-            })}
+    <div className="flex flex-col h-full gap-4">
+      <div className="grid grid-cols-7 p-4">
+        <div className="col-span-3 flex flex-col justify-center">
+          <p className="font-semibold text-2xl">Good Morning, 👋</p>
+          <p className="font-light text-gray-500">
+            Small steps make big progress.Keep going!
+          </p>
         </div>
-      </DragDropContext>
+
+        <div className="col-span-3">
+          <div className="grid grid-cols-3 gap-2">
+            <div className="flex items-center gap-4 p-4 border border-gray-300 text-md rounded-md">
+              <div className="p-2 bg-violet-100 rounded-full">
+                <RectangleStackIcon className="h-6 w-6 text-violet-500" />
+              </div>
+              <div>
+                <div>6</div>
+                <div className="font-light text-gray-500">Total tasks</div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 p-4  border border-gray-300 text-md rounded-md">
+              <div className="p-2 bg-blue-100 rounded-full">
+                <ClipboardDocumentIcon className="h-6 w-6 text-blue-500" />
+              </div>
+              <div>
+                <div>6</div>
+                <div className="font-light text-gray-500">In Progress</div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 p-4  border border-gray-300 text-md rounded-md">
+              <div className="p-2 bg-green-100 rounded-full">
+                <ClipboardDocumentCheckIcon className="h-6 w-6 text-green-500" />
+              </div>
+              <div>
+                <div>6</div>
+                <div className="font-light text-gray-500">Complated</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-end items-center">
+          <div className="flex items-center gap-2 h-2/3 text-gray-400 bg-gray-100 p-3 rounded-xl">
+            <CalendarDaysIcon className="w-5 h-5" />
+            {date.toLocaleDateString("en-US", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            })}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 verflow-x-auto">
+        <div className="flex h-full gap-4">
+          <DragDropContext onDragEnd={handleDragEnd}>
+            {columns &&
+              columns.map((column) => {
+                return <Column key={column.uuid} column={column} />;
+              })}
+          </DragDropContext>
+          <div className="flex justify-center items-center min-w-100 rounded-2xl text-gray-500 border-2 bg-gray-100 border-gray-300 border-dashed bg-clip-padding p-3">
+            <div className="flex flex-col items-center gap-4">
+              <div className="font-bold text-xl">Add Columns</div>
+              <div className="">Organize your workflow with new columns.</div>
+              <AddColumn />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

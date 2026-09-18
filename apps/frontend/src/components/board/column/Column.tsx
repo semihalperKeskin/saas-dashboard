@@ -12,7 +12,7 @@ function Column({ column }: { column: BoardStateInput }) {
 
   const removeColumn = (uuid: string) => {
     const alert = window.confirm(
-      "Are you sure you want to delete this column? All tasks within this column will also be deleted."
+      "Are you sure you want to delete this column? All tasks within this column will also be deleted.",
     );
 
     if (!alert) return;
@@ -33,7 +33,7 @@ function Column({ column }: { column: BoardStateInput }) {
         <div
           ref={provided.innerRef}
           {...provided.droppableProps}
-          className="p-4 rounded-lg min-h-96 border-2 border-transparent hover:border-blue-200 bg-gray-100"
+          className="min-w-80 p-4 rounded-lg border-2 border-transparent hover:border-blue-200 bg-gray-100"
           style={{
             background: snapshot.isDraggingOver ? "#f0f6ff" : "#f7f7f7",
           }}
