@@ -1,9 +1,9 @@
-import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import Modal from "../Modal";
 import { useAppDispatch } from "~/app/hooks";
 import { addTaskCard } from "~/features/boardSlice";
 import apiClient from "~/api/client";
+import AddIcon from "@mui/icons-material/Add";
 
 type AddTaskCardProps = {
   columnUUID: string;
@@ -39,7 +39,7 @@ function AddTaskCard({ columnUUID }: AddTaskCardProps) {
         onClick={() => setIsOpen(true)}
         className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 cursor-pointer"
       >
-        <PlusCircleIcon className="h-5 w-5" />
+        <AddIcon className="h-5 w-5" />
         Add Task
       </button>
 

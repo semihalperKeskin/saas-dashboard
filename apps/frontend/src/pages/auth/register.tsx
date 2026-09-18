@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
 import { useNavigate } from "react-router-dom";
 import { AuthInput, RegisterSchema } from "@vizionboard/validation";
 import { z } from "zod";
 import toastMessage from "~/components/toast";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -50,7 +51,7 @@ function Register() {
       .then((data: { message: string }) => {
         toastMessage(
           data.message || "Registration successful. Please log in.",
-          "success"
+          "success",
         );
         navigate("/auth/login");
       })
@@ -59,7 +60,7 @@ function Register() {
           error instanceof Error ? error.message : "Unexpected error";
         toastMessage(
           message || "Registration failed. Please try again.",
-          "error"
+          "error",
         );
       });
   };
@@ -110,9 +111,9 @@ function Register() {
                 onClick={() => setShowPassword((prev) => !prev)}
               >
                 {showPassword ? (
-                  <EyeSlashIcon className="w-5 h-5 text-gray-500" />
+                  <VisibilityOffIcon className="w-5 h-5 text-gray-500" />
                 ) : (
-                  <EyeIcon className="w-5 h-5 text-gray-500" />
+                  <VisibilityIcon className="w-5 h-5 text-gray-500" />
                 )}
               </div>
             </div>

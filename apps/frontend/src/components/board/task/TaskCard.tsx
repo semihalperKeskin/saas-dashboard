@@ -1,9 +1,9 @@
 import { Draggable } from "@hello-pangea/dnd";
-import { XMarkIcon } from "@heroicons/react/16/solid";
 import { TaskInput } from "@vizionboard/validation";
 import apiClient from "~/api/client";
 import { useAppDispatch } from "~/app/hooks";
 import { deleteTask } from "~/features/boardSlice";
+import CloseIcon from "@mui/icons-material/Close";
 
 function TaskCard({ task, index }: { task: TaskInput; index: number }) {
   const dispatch = useAppDispatch();
@@ -35,7 +35,7 @@ function TaskCard({ task, index }: { task: TaskInput; index: number }) {
         >
           <div>{task.content}</div>
           <button onClick={removeTask} className="ml-2">
-            <XMarkIcon className="w-6 h-6 cursor-pointer text-gray-500 hover:text-gray-700" />
+            <CloseIcon className="w-6 h-6 cursor-pointer text-gray-500 hover:text-gray-700" />
           </button>
         </div>
       )}

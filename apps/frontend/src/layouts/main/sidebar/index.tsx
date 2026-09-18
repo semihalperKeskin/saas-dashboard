@@ -1,12 +1,10 @@
-import {
-  ArrowLeftStartOnRectangleIcon,
-  ChartBarSquareIcon,
-  RectangleStackIcon,
-  UserIcon,
-} from "@heroicons/react/16/solid";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAppDispatch } from "~/app/hooks";
 import toastMessage from "~/components/toast";
+import PersonIcon from "@mui/icons-material/Person";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import LeaderboardIcon from "@mui/icons-material/Leaderboard";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 export function Sidebar() {
   const navigate = useNavigate();
@@ -15,17 +13,17 @@ export function Sidebar() {
 
   const sidebarItems = [
     {
-      icon: <RectangleStackIcon className="h-4" />,
+      icon: <DashboardIcon className="h-4" />,
       label: "Board",
       to: "/",
     },
     {
-      icon: <UserIcon className="h-4" />,
+      icon: <PersonIcon className="h-4" />,
       label: "Profile",
       to: "/profile",
     },
     {
-      icon: <ChartBarSquareIcon className="h-4" />,
+      icon: <LeaderboardIcon className="h-4" />,
       label: "Statistics",
       to: "/statistics",
     },
@@ -80,7 +78,7 @@ export function Sidebar() {
         onClick={logout}
         className="flex items-center gap-2 px-3 py-2 text-red-500 hover:bg-red-100 hover:text-red-600 rounded-md cursor-pointer duration-150"
       >
-        <ArrowLeftStartOnRectangleIcon className="w-5 h-5" />
+        <LogoutIcon className="w-5 h-5" />
         Logout
       </button>
     </aside>

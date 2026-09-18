@@ -1,10 +1,8 @@
 import { useEffect, useRef } from "react";
-import {
-  DocumentPlusIcon,
-  PlusIcon,
-  XMarkIcon,
-} from "@heroicons/react/16/solid";
-import { TicketIcon } from "@heroicons/react/24/outline";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
 
 type ModalProps = {
   isOpen: boolean;
@@ -65,7 +63,7 @@ export default function Modal({
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600">
-              <DocumentPlusIcon className="h-6 w-6" />
+              <LibraryAddIcon className="h-6 w-6" />
             </div>
             <div>
               <p id="modal-title" className="font-medium text-slate-900">
@@ -85,7 +83,7 @@ export default function Modal({
             aria-label="Close modal"
             className="rounded-full p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
           >
-            <XMarkIcon className="h-5 w-5" />
+            <CloseIcon className="h-5 w-5" />
           </button>
         </div>
 
@@ -107,7 +105,7 @@ export default function Modal({
                 className="w-full border-0 bg-transparent p-2 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-0"
                 required
               />
-              <TicketIcon className="h-4 w-4 text-slate-400" />
+              <ConfirmationNumberIcon className="h-4 w-4 text-slate-400" />
             </div>
           </div>
 
@@ -127,7 +125,7 @@ export default function Modal({
                 disabled={!inputState?.trim()}
                 className="flex items-center gap-1 rounded-full bg-indigo-500 px-5 py-2 text-sm font-medium text-white shadow-sm shadow-indigo-500/30 transition-colors hover:bg-indigo-600 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
               >
-                <PlusIcon className="h-4 w-4" />
+                <AddIcon className="h-4 w-4" />
                 Add {actionButtonLabel}
               </button>
             </div>

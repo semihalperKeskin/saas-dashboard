@@ -2,10 +2,10 @@ import { Droppable } from "@hello-pangea/dnd";
 import { BoardStateInput } from "@vizionboard/validation";
 import TaskCard from "../task/TaskCard";
 import AddTaskCard from "../task/AddTaskCard";
-import { TrashIcon } from "@heroicons/react/16/solid";
 import { useAppDispatch } from "~/app/hooks";
 import { deleteColumn } from "~/features/boardSlice";
 import apiClient from "~/api/client";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 function Column({ column }: { column: BoardStateInput }) {
   const dispatch = useAppDispatch();
@@ -41,7 +41,7 @@ function Column({ column }: { column: BoardStateInput }) {
           <div className="m-0 mb-4 flex">
             <div className="flex-1">{column.title}</div>
             <AddTaskCard columnUUID={column.uuid.toString()} />
-            <TrashIcon
+            <DeleteForeverIcon
               onClick={() => removeColumn(column.uuid)}
               className="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer ml-2"
             />

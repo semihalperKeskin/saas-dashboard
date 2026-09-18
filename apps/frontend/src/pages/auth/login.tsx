@@ -1,4 +1,5 @@
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { AuthInput } from "@vizionboard/validation";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -86,9 +87,9 @@ function Login() {
                 onClick={() => setShowPassword((prev) => !prev)}
               >
                 {showPassword ? (
-                  <EyeSlashIcon className="w-5 h-5 text-gray-500" />
+                  <VisibilityOffIcon className="w-5 h-5 text-gray-500" />
                 ) : (
-                  <EyeIcon className="w-5 h-5 text-gray-500" />
+                  <VisibilityIcon className="w-5 h-5 text-gray-500" />
                 )}
               </div>
             </div>

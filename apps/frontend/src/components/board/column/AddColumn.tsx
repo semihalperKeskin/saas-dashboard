@@ -1,9 +1,9 @@
-import { PlusIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import Modal from "../Modal";
 import { addColumn } from "~/features/boardSlice";
 import { useAppDispatch } from "~/app/hooks";
 import apiClient from "~/api/client";
+import AddIcon from "@mui/icons-material/Add";
 
 function AddColumn() {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,7 +35,7 @@ function AddColumn() {
         onClick={() => setIsOpen(true)}
         className="cursor-pointer flex items-center rounded-md px-5 py-2 text-sm bg-blue-600 hover:bg-blue-800 text-white"
       >
-        <PlusIcon className="h-5 w-5" />
+        <AddIcon className="h-5 w-5" />
         Add Column
       </button>
 

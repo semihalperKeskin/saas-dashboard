@@ -12,12 +12,10 @@ import AddColumn from "./column/AddColumn";
 import Column from "./column/Column";
 import { useAppDispatch } from "~/app/hooks";
 import apiClient from "~/api/client";
-import {
-  CalendarDaysIcon,
-  ClipboardDocumentCheckIcon,
-  ClipboardDocumentIcon,
-  RectangleStackIcon,
-} from "@heroicons/react/16/solid";
+import WidgetsIcon from "@mui/icons-material/Widgets";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 
 function Board() {
   const dispatch = useAppDispatch();
@@ -116,7 +114,7 @@ function Board() {
           <div className="grid grid-cols-3 gap-2">
             <div className="flex items-center gap-4 p-4 border border-gray-300 text-md rounded-md">
               <div className="p-2 bg-violet-100 rounded-full">
-                <RectangleStackIcon className="h-6 w-6 text-violet-500" />
+                <WidgetsIcon className="h-6 w-6 text-violet-500" />
               </div>
               <div>
                 <div>6</div>
@@ -126,7 +124,7 @@ function Board() {
 
             <div className="flex items-center gap-4 p-4  border border-gray-300 text-md rounded-md">
               <div className="p-2 bg-blue-100 rounded-full">
-                <ClipboardDocumentIcon className="h-6 w-6 text-blue-500" />
+                <AssignmentIcon className="h-6 w-6 text-blue-500" />
               </div>
               <div>
                 <div>6</div>
@@ -136,7 +134,7 @@ function Board() {
 
             <div className="flex items-center gap-4 p-4  border border-gray-300 text-md rounded-md">
               <div className="p-2 bg-green-100 rounded-full">
-                <ClipboardDocumentCheckIcon className="h-6 w-6 text-green-500" />
+                <AssignmentTurnedInIcon className="h-6 w-6 text-green-500" />
               </div>
               <div>
                 <div>6</div>
@@ -148,7 +146,7 @@ function Board() {
 
         <div className="flex justify-end items-center">
           <div className="flex items-center gap-2 h-2/3 text-gray-400 bg-gray-100 p-3 rounded-xl">
-            <CalendarDaysIcon className="w-5 h-5" />
+            <CalendarTodayIcon className="w-5 h-5" />
             {date.toLocaleDateString("en-US", {
               day: "numeric",
               month: "short",
