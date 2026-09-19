@@ -101,7 +101,7 @@ function Board() {
   const date: Date = new Date();
 
   return (
-    <div className="flex flex-col h-full gap-4">
+    <div className="flex flex-col h-full gap-4 overflow-hidden">
       <div className="grid grid-cols-7 p-4">
         <div className="col-span-3 flex flex-col justify-center">
           <p className="font-semibold text-2xl">Good Morning, 👋</p>
@@ -156,7 +156,7 @@ function Board() {
         </div>
       </div>
 
-      <div className="flex-1 verflow-x-auto">
+      <div className="flex-1 overflow-x-auto">
         <div className="flex h-full gap-4">
           <DragDropContext onDragEnd={handleDragEnd}>
             {columns &&
