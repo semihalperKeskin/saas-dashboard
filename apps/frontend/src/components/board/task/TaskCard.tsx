@@ -27,13 +27,15 @@ function TaskCard({ task, index }: { task: TaskInput; index: number }) {
           {...prov.draggableProps}
           {...prov.dragHandleProps}
           className={`
-            p-2.5 mb-2 rounded-[10px] border border-gray-200 select-none flex justify-between items-center
+            p-2.5 mb-2 rounded-md border border-gray-200 select-none flex justify-between items-center
             ${snap.isDragging ? "bg-sky-100 shadow-lg" : "bg-white shadow"}`}
           style={{
             ...prov.draggableProps.style,
           }}
         >
-          <div>{task.content}</div>
+          <div className="wrap-break-word flex-1 min-w-0 pr-2 p-3">
+            {task.content}
+          </div>
           <button onClick={removeTask} className="ml-2">
             <CloseIcon className="w-6 h-6 cursor-pointer text-gray-500 hover:text-gray-700" />
           </button>
