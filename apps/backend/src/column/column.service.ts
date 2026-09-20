@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ColumnInput } from './dto/column.dto';
 import { UUID } from 'crypto';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ColumnService {
