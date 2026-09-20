@@ -45,7 +45,7 @@ function Column({ column }: { column: BoardStateInput }) {
 
   return (
     <Droppable droppableId={column.uuid} key={column.uuid}>
-      {(provided, snapshot) => (
+      {(provided, _snapshot) => (
         <div
           ref={provided.innerRef}
           {...provided.droppableProps}
