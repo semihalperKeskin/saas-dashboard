@@ -11,7 +11,7 @@
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-      "@vizionboard/validation": ["../../packages/validation/src"]
+      "@vizionboard/validation": ["../../packages/validation/dist"]
     },
     "esModuleInterop": true,
     "incremental": true,

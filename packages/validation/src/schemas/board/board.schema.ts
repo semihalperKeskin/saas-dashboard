@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TaskSchema } from "@vizionboard/validation";
+import { TaskSchema } from "../../schemas/task/task.schema";
 
 export const BoardStateSchema = z.object({
   id: z.number(),
