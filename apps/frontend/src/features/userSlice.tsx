@@ -1,19 +1,19 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserInput } from "@vizionboard/validation";
+import apiClient from "~/api/client";
 
 export const fetchUser = createAsyncThunk(
   "users/fetchUser",
   async (_, thunkAPI) => {
-    const response = await fetch("/api/user/me", {
+    const response = await apiClient("/api/user/me", {
       method: "GET",
-      credentials: "include",
     });
     if (!response.ok) {
       return thunkAPI.rejectWithValue("Failed to fetch users");
     }
     const result = await response.json();
     return result;
-  }
+  },
 );
 
 interface UserState {

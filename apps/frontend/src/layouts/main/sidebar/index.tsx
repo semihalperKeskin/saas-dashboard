@@ -5,6 +5,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 import LogoutIcon from "@mui/icons-material/Logout";
+import apiClient from "~/api/client";
 
 export function Sidebar() {
   const navigate = useNavigate();
@@ -30,9 +31,8 @@ export function Sidebar() {
   ];
 
   const logout = async () => {
-    fetch("/api/auth/logout", {
+    apiClient("/api/auth/logout", {
       method: "POST",
-      credentials: "include",
     })
       .then((res) => {
         if (!res.ok) {

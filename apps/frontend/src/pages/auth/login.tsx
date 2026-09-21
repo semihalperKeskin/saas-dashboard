@@ -3,6 +3,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { AuthInput } from "@vizionboard/validation";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import apiClient from "~/api/client";
 import toastMessage from "~/components/toast";
 
 function Login() {
@@ -20,12 +21,8 @@ function Login() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    fetch("/api/auth/login", {
+    apiClient("/api/auth/login", {
       method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(formData),
     })
       .then(async (res) => {

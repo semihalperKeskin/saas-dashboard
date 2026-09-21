@@ -5,6 +5,7 @@ import { z } from "zod";
 import toastMessage from "~/components/toast";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import apiClient from "~/api/client";
 
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -35,11 +36,8 @@ function Register() {
       return;
     }
 
-    fetch("/api/auth/register", {
+    apiClient("/api/auth/register", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(formData),
     })
       .then((response) => {

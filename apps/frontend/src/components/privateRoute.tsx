@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
+import apiClient from "~/api/client";
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const [isValid, setIsValid] = useState<boolean | null>(null);
@@ -9,12 +10,8 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const validation = () => {
-    fetch("/api/auth/validation", {
+    apiClient("/api/auth/validation", {
       method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
     })
       .then((res) => {
         if (res.ok) {

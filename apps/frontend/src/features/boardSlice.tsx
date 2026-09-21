@@ -1,16 +1,17 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BoardStateInput } from "@vizionboard/validation";
+import apiClient from "~/api/client";
 
 export const fetchColumns = createAsyncThunk(
   "column/fetchAll",
   async (_, thunkAPI) => {
-    const response = await fetch("/api/column");
+    const response = await apiClient("/api/column");
     if (!response.ok) {
       return thunkAPI.rejectWithValue("Failed to fetch columns");
     }
     const result = await response.json();
     return result as BoardStateInput[];
-  }
+  },
 );
 
 interface BoardState {
@@ -46,7 +47,7 @@ const columnSlice = createSlice({
     },
     addTaskCard: (
       state,
-      action: PayloadAction<{ columnUUID: string; content: string }>
+      action: PayloadAction<{ columnUUID: string; content: string }>,
     ) => {
       const { columnUUID, content } = action.payload;
       const column = state.entities.find((col) => col.uuid === columnUUID);
@@ -72,7 +73,7 @@ const columnSlice = createSlice({
         destColId: string;
         taskId: string;
         destIndex: number;
-      }>
+      }>,
     ) => {
       const { sourceColId, destColId, taskId, destIndex } = action.payload;
 
@@ -82,7 +83,7 @@ const columnSlice = createSlice({
       if (!startCol || !finishCol) return;
 
       const taskIndex = startCol.tasks.findIndex(
-        (task) => task.uuid === taskId
+        (task) => task.uuid === taskId,
       );
       if (taskIndex === -1) return;
 
@@ -96,7 +97,7 @@ const columnSlice = createSlice({
         sourceColId: string;
         taskId: string;
         destIndex: number;
-      }>
+      }>,
     ) => {
       const { sourceColId, taskId, destIndex } = action.payload;
 
@@ -116,7 +117,7 @@ const columnSlice = createSlice({
     deleteColumn: (state, action: PayloadAction<string>) => {
       console.log("Deleting column with UUID:", action.payload);
       state.entities = state.entities.filter(
-        (col) => col.uuid !== action.payload
+        (col) => col.uuid !== action.payload,
       );
     },
   },
