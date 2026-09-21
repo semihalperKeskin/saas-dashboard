@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -112,7 +113,7 @@ export class AuthService {
       where: { email: data.email },
     });
     if (userExists) {
-      throw new Error('User already exists');
+      throw new ConflictException('User already exists');
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -129,7 +130,8 @@ export class AuthService {
       },
     });
 
-    return user;
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 
   async generateAccessToken(user: { id: number; email: string }) {
