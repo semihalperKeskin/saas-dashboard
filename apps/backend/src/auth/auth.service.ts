@@ -54,9 +54,18 @@ export class AuthService {
   }
 
   async login(data: AuthInput) {
+    const debug = process.env.DEBUG_AUTH === 'true';
+
     const user = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
+
+    if (debug) {
+      console.log('[auth] login attempt:', {
+        email: data.email,
+        userFound: !!user,
+      });
+    }
 
     if (!user || !user.password) {
       throw new UnauthorizedException('Invalid credentials');
@@ -67,6 +76,11 @@ export class AuthService {
     }
 
     const isPasswordValid = await bcrypt.compare(data.password, user.password);
+
+    if (debug) {
+      console.log('[auth] password match:', isPasswordValid);
+    }
+
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
