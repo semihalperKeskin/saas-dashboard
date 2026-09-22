@@ -16,6 +16,12 @@ import { RegisterInput, RegisterSchema } from './dto/register.dto';
 import { Request, Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 
+const REFRESH_COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'none' as const,
+};
+
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -28,11 +34,7 @@ export class AuthController {
   ) {
     const { refreshToken, accessToken } = await this.authService.login(data);
 
-    response.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-    });
+    response.cookie('refreshToken', refreshToken, REFRESH_COOKIE_OPTIONS);
 
     return { accessToken };
   }
@@ -44,7 +46,7 @@ export class AuthController {
   }
 
   @Post('validation')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt-access'))
   validation() {
     return { isValid: true };
   }
@@ -69,7 +71,7 @@ export class AuthController {
 
     await this.authService.logout(token);
 
-    res.clearCookie('refreshToken');
+    res.clearCookie('refreshToken', REFRESH_COOKIE_OPTIONS);
 
     return true;
   }
