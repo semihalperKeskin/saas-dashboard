@@ -18,22 +18,35 @@ model User {
   password     String
   createdAt    DateTime    @default(now())
   tokens       UserToken[]
+  boards       Board[]
 }
 
 model UserToken {
-  id     Int    @id @default(autoincrement())
-  refreshToken  String?
-  expiresAt DateTime?
+  id           Int       @id @default(autoincrement())
+  refreshToken String?
+  expiresAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
+  userId       Int
+  user         User      @relation(fields: [userId], references: [id])
+}
+
+model Board {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(uuid())
+  title     String   @default("My Board")
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  columns   Column[]
   createdAt DateTime @default(now())
-  updatedAt DateTime? @updatedAt
-  userId Int
-  user   User   @relation(fields: [userId], references: [id])
 }
 
 model Column {
   id        Int      @id @default(autoincrement())
   uuid      String   @unique @default(uuid())
   title     String
+  boardId   Int
+  board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
   order     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
