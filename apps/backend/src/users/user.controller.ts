@@ -13,15 +13,11 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 
 @Controller('user')
+@UseGuards(AuthGuard('jwt'))
 export class UserController {
   constructor(private readonly userService: UserService) {}
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
 
   @Get('me')
-  @UseGuards(AuthGuard('jwt'))
   findOne(@Req() req: Request) {
     const user = req.user as { id: number; username: string } | undefined;
 
@@ -33,7 +29,6 @@ export class UserController {
   }
 
   @Patch('me')
-  @UseGuards(AuthGuard('jwt'))
   updateUser(@Req() req: Request, @Body() userData: UpdateUserInput) {
     const user = req.user as { id: number; username: string } | undefined;
 

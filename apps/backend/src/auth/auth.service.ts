@@ -144,6 +144,12 @@ export class AuthService {
       },
     });
 
+    await this.prisma.board.create({
+      data: {
+        userId: user.id,
+      },
+    });
+
     const { password, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }

@@ -14,6 +14,7 @@ import { CreateTaskInput, MoveTaskInput } from '@vizionboard/validation';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('task')
+@UseGuards(AuthGuard('jwt-access'))
 export class TaskController {
   constructor(private readonly task: TaskService) {}
 
@@ -27,7 +28,6 @@ export class TaskController {
     return this.task.create(task);
   }
 
-  @UseGuards(AuthGuard('jwt-access'))
   @Put('move')
   async move(@Body() moveTask: MoveTaskInput) {
     return this.task.move(moveTask);

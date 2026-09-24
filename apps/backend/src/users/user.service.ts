@@ -6,13 +6,17 @@ import { PrismaService } from '../prisma/prisma.service';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  findAll() {
-    return this.prisma.user.findMany();
-  }
-
   findOne(userId: number) {
     return this.prisma.user.findUnique({
       where: { id: userId },
+      select: {
+        name: true,
+        username: true,
+        organization: true,
+        job: true,
+        email: true,
+        createdAt: true,
+      },
     });
   }
 
