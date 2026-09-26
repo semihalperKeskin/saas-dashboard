@@ -10,6 +10,7 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import React from "react";
+import Divider from "@mui/material/Divider";
 
 function Column({ column }: { column: BoardStateInput }) {
   const dispatch = useAppDispatch();
@@ -44,60 +45,60 @@ function Column({ column }: { column: BoardStateInput }) {
   };
 
   return (
-    <Droppable droppableId={column.uuid} key={column.uuid}>
-      {(provided, _snapshot) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.droppableProps}
-          className="min-w-1/4 py-2 rounded-xl border-2 border-transparent hover:border-blue-200 bg-mauve-100"
-        >
-          <div className="flex flex-col gap-3 h-full">
-            <div className="flex items-center justify-between px-5 py-3 gap-3 h-12">
-              <div className="flex items-center font-medium">
-                {column.title}
-              </div>
+    <div className="min-w-1/4 py-2 rounded-xl border-2 border-transparent hover:border-blue-200 bg-mauve-100">
+      <div className="flex flex-col gap-3 h-full">
+        <div className="flex items-center justify-between px-5 py-3 gap-3 h-12">
+          <div className="flex items-center font-medium">{column.title}</div>
 
-              <div className="flex">
-                <Button
-                  id={buttonId}
-                  aria-controls={open ? menuId : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={open}
-                  onClick={handleClick}
-                >
-                  <MenuIcon className="w-3 h-3 text-gray-500" />
-                </Button>
-                <Menu
-                  id={menuId}
-                  anchorEl={anchorEl}
-                  open={open}
-                  onClose={handleClose}
-                  slotProps={{
-                    list: {
-                      "aria-labelledby": buttonId,
-                    },
-                  }}
-                >
-                  <MenuItem onClick={() => removeColumn(column.uuid)}>
-                    Delete
-                  </MenuItem>
-                </Menu>
-                <AddTaskCard columnUUID={column.uuid.toString()} />
-              </div>
-            </div>
-            <hr className="border border-black/10" />
-            <div className="px-3">
-              {column.tasks &&
-                Array.isArray(column.tasks) &&
-                column.tasks.map((task, index) => (
-                  <TaskCard key={task.uuid} task={task} index={index} />
-                ))}
-              {provided.placeholder}
-            </div>
+          <div className="flex">
+            <Button
+              id={buttonId}
+              aria-controls={open ? menuId : undefined}
+              aria-haspopup="true"
+              aria-expanded={open}
+              onClick={handleClick}
+            >
+              <MenuIcon className="w-3 h-3 text-gray-500" />
+            </Button>
+            <Menu
+              id={menuId}
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              slotProps={{
+                list: {
+                  "aria-labelledby": buttonId,
+                },
+              }}
+            >
+              <MenuItem onClick={() => removeColumn(column.uuid)}>
+                Delete
+              </MenuItem>
+            </Menu>
+            <AddTaskCard columnUUID={column.uuid.toString()} />
           </div>
         </div>
-      )}
-    </Droppable>
+        <Divider />
+        <div className="px-3 h-full">
+          <Droppable droppableId={column.uuid}>
+            {(provided, _snapshot) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className="flex-1 min-h-full"
+              >
+                {column.tasks &&
+                  Array.isArray(column.tasks) &&
+                  column.tasks.map((task, index) => (
+                    <TaskCard key={task.uuid} task={task} index={index} />
+                  ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </div>
+      </div>
+    </div>
   );
 }
 
