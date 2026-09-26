@@ -6,6 +6,8 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 import LogoutIcon from "@mui/icons-material/Logout";
 import apiClient from "~/api/client";
+import { clearAuth } from "~/features/authSlice";
+import { clearUser } from "../../../features/userSlice";
 
 export function Sidebar() {
   const navigate = useNavigate();
@@ -39,8 +41,8 @@ export function Sidebar() {
           throw new Error("Logout is failed.");
         }
 
-        dispatch({ type: "user/clearUser" });
-        localStorage.removeItem("accessToken");
+        dispatch(clearUser());
+        dispatch(clearAuth());
         navigate("/auth/login", { replace: true });
       })
       .catch((error) => {

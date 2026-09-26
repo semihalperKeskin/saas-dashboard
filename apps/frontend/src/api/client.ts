@@ -1,3 +1,6 @@
+import { store } from "~/app/store";
+import { clearAuth, setAccessToken } from "~/features/authSlice";
+
 const API_BASE = import.meta.env.VITE_API_URL || "";
 
 const resolveUrl = (path: string) => {
@@ -5,7 +8,7 @@ const resolveUrl = (path: string) => {
   return `${API_BASE}${path.replace(/^\/api/, "")}`;
 };
 
-const refreshAccessToken = async () => {
+export const refreshAccessToken = async () => {
   try {
     const res = await fetch(resolveUrl("/api/auth/refresh-token"), {
       method: "GET",
@@ -18,18 +21,17 @@ const refreshAccessToken = async () => {
     }
 
     const data = await res.json();
-    localStorage.setItem("accessToken", data.accessToken);
+    store.dispatch(setAccessToken(data.accessToken));
   } catch (error) {
     console.error("Error refreshing access token:", error);
-    localStorage.removeItem("accessToken");
+    store.dispatch(clearAuth());
     throw error;
   }
 };
 
 const apiClient = async (url: string, options: RequestInit = {}) => {
   const buildOptions = () => {
-    const currentAccessToken = localStorage.getItem("accessToken");
-
+    const currentAccessToken = store.getState().auth.accessToken;
     return {
       credentials: "include",
       ...options,

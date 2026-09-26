@@ -17,7 +17,7 @@ export const fetchUser = createAsyncThunk(
 );
 
 interface UserState {
-  entities: UserInput;
+  entities: UserInput | null;
   loading: "idle" | "pending" | "succeeded" | "failed";
 }
 
@@ -34,7 +34,7 @@ const userSlice = createSlice({
       state.entities = action.payload;
     },
     clearUser: (state) => {
-      state.entities = {} as UserInput;
+      state.entities = null;
     },
   },
   extraReducers: (builder) => {
@@ -51,5 +51,7 @@ const userSlice = createSlice({
       });
   },
 });
+
+export const { setUser, clearUser } = userSlice.actions;
 
 export default userSlice.reducer;

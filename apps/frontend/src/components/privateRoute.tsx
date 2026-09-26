@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import apiClient from "~/api/client";
+import apiClient, { refreshAccessToken } from "~/api/client";
+import { store } from "~/app/store";
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const [isValid, setIsValid] = useState<boolean | null>(null);
@@ -9,7 +10,17 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
     validation();
   }, []);
 
-  const validation = () => {
+  const validation = async () => {
+    const token = store.getState().auth.accessToken;
+
+    if (!token) {
+      try {
+        await refreshAccessToken();
+      } catch {
+        setIsValid(false);
+        return;
+      }
+    }
     apiClient("/api/auth/validation", {
       method: "POST",
     })
